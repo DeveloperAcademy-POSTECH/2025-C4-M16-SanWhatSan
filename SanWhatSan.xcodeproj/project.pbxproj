@@ -269,9 +269,12 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SanWhatSan/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "카메라를 사용하기 위해 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "사용자의 위치를 기반으로 정보를 제공하기 위해 동의가 필요합니다.";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "앱을 사용하는 동안 위치 정보를 사용합니다. ";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 위치를 기반으로 정보를 제공하기 위해 동의가 필요합니다. ";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "사진을 저장하려면 사진 보관함 접근이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "앨범의 사진을 불러오려면 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -302,9 +305,12 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SanWhatSan/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "카메라를 사용하기 위해 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "사용자의 위치를 기반으로 정보를 제공하기 위해 동의가 필요합니다.";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "앱을 사용하는 동안 위치 정보를 사용합니다. ";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 위치를 기반으로 정보를 제공하기 위해 동의가 필요합니다. ";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "사진을 저장하려면 사진 보관함 접근이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "앨범의 사진을 불러오려면 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
