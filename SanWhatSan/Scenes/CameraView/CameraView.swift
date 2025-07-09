@@ -13,6 +13,13 @@ struct CameraView: View {
     @StateObject private var coordinator = Coordinator()
     @State private var capturedImage: UIImage? = nil
     @State private var isShowingImageView = false
+    
+    @Environment(\.dismiss) private var dismiss
+    @StateObject private var viewModel = MountainListViewModel()
+    @State var chosenMountain: Mountain?
+    
+    @State private var isShowingMountainList = false
+    
     var body: some View {
         
         NavigationStack{
@@ -20,11 +27,19 @@ struct CameraView: View {
                 let width = geometry.size.width
                 let height = width * 4 / 3
                 VStack{
-                    
+                    if let selected = chosenMountain ?? viewModel.closestMountains.first {
+                        Text("선택한 산: \(selected.name)")
+                            .font(.headline)
+                            .padding(.top)
+                    } else {
+                        Text("위치 기반 산 검색이 아직 준비되지 않았습니다.")
+                            .font(.headline)
+                            .padding(.top)
+                    }
                     Spacer()
                     
                     NavigationLink{
-                        MountainListView()
+                        MountainListView(chosenMountain: $chosenMountain)
                     } label: {
                         Text("다른 산으로 이동")
                             .padding(10)
@@ -35,7 +50,7 @@ struct CameraView: View {
                     ARViewContainer(coordinator: coordinator)
                         .frame(width: width, height: height)
                         .background(Color.gray.opacity(0.2))
-                        .cornerRadius(16)
+                        .cornerRadius(16)  
                         .clipped()
                     
                     HStack {
