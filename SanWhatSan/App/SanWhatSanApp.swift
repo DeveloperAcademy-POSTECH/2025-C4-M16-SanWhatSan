@@ -14,7 +14,7 @@ struct SanWhatSanApp: App {
     
     var body: some Scene {
         WindowGroup {
-            CameraView()
+            CameraView(LocationViewModel)
                 .preferredColorScheme(.light)
                 .onAppear{
                     LocationViewModel.requestLocationAccess()

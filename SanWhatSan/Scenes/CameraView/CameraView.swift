@@ -11,7 +11,7 @@ import RealityKit
 
 struct CameraView: View {
     @StateObject var viewModel = CameraViewModel()
-    @StateObject var mountainListViewModel = MountainListViewModel()
+    @EnvironmentObject var mountainListViewModel: MountainListViewModel
     // MARK: 리팩토링?
     @State var chosenMountain: Mountain?
     @State var isImageViewActive = false
