@@ -10,9 +10,10 @@ import MapKit
 
 struct MountainListView: View {
     
-    @Environment(\.dismiss) private var dismiss
+//    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var coordinator: NavigationCoordinator
     @StateObject private var viewModel = MountainListViewModel()
-    @Binding var chosenMountain: Mountain?    //binding 변경
+//    @Binding var chosenMountain: Mountain?    //binding 변경
     
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 35.85, longitude: 128.57),
@@ -24,16 +25,15 @@ struct MountainListView: View {
     
     
     var body: some View {
-        NavigationStack{
             VStack{
                 // 이거는 원래 카메라뷰에 들어가야 할 내용인디 일단 이 뷰에다가 할게용 !
-                if let selected = chosenMountain ?? viewModel.closestMountains.first {
+                if let selected = viewModel.selectedMountain {
                     Text("선택한 산: \(selected.name)")
                         .font(.headline)
                         .padding(.top)
 
                     Map(position: $cameraPosition) {
-                        Marker(selected.name, coordinate: selected.coordinate)
+                        Marker(selected.name, coordinate: selected.coordinate.clLocationCoordinate2D)
                     }
                     .cornerRadius(20)
                     .frame(height: 300)
@@ -55,8 +55,10 @@ struct MountainListView: View {
                             title: mountain.name,
                             description: "위도: \(mountain.coordinate.latitude), 경도: \(mountain.coordinate.longitude)"
                         ) {
-                            chosenMountain = mountain
-                            dismiss()
+//                            chosenMountain = mountain
+//                            dismiss()
+                            viewModel.manager.chosenMountain = mountain
+                            coordinator.pop()
                         }
                     }
                 }
@@ -67,38 +69,35 @@ struct MountainListView: View {
                 
             }
             .onChange(of: viewModel.closestMountains) {
-                if chosenMountain == nil,
-                   let first = viewModel.closestMountains.first {
-                    chosenMountain = first
+                if let first = viewModel.closestMountains.first {
                     cameraPosition = .region(MKCoordinateRegion(
-                        center: first.coordinate,
+                        center: first.coordinate.clLocationCoordinate2D,
                         span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
                     ))
                 }
             }
-            .onChange(of: chosenMountain) {
-                if let selected = chosenMountain {
-                        withAnimation {
-                            cameraPosition = .region(
-                                MKCoordinateRegion(
-                                    center: selected.coordinate,
-                                    span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-                                )
-                            )
-                        }
-                    }
-            }
+//            .onChange(of: chosenMountain) {
+//                if let selected = chosenMountain {
+//                        withAnimation {
+//                            cameraPosition = .region(
+//                                MKCoordinateRegion(
+//                                    center: selected.coordinate.clLocationCoordinate2D,
+//                                    span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+//                                )
+//                            )
+//                        }
+//                    }
+//            }
             .alert("위치 권한이 필요합니다", isPresented: $viewModel.shouldShowAlert){
                 Button("OK", role: .cancel){}
             }
             .padding(.horizontal)
             .padding(.vertical)
         }
-        .navigationTitle("MountainListView")
     }
-}
+
 
 
 #Preview {
-    //MountainListView()
+    MountainListView()
 }

@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct ImageView: View {
-    let image: UIImage
-//    let onRetake: () -> Void // ❌ 버튼용 콜백
+//    let image: UIImage
+    @EnvironmentObject private var coordinator: NavigationCoordinator
+    let displayImage: DisplayImage
     @State private var showShareSheet = false
     @State private var showSaveAlert = false
 
@@ -17,7 +18,7 @@ struct ImageView: View {
         ZStack(alignment: .bottom) {
             Color.black.ignoresSafeArea()
 
-            Image(uiImage: image)
+            Image(uiImage: displayImage.image)
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: 300, maxHeight: 400)
@@ -26,7 +27,7 @@ struct ImageView: View {
 
             HStack(spacing: 30) {
                 Button(action: {
-//                    onRetake()
+                    coordinator.pop()
                 }) {
                     Label("닫기", systemImage: "xmark.circle.fill")
                         .font(.title)
@@ -35,7 +36,7 @@ struct ImageView: View {
 
 
                 Button(action: {
-                    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                    UIImageWriteToSavedPhotosAlbum(displayImage.image, nil, nil, nil)
                     showSaveAlert = true
                 }) {
                     Label("저장", systemImage: "square.and.arrow.down")
@@ -54,7 +55,7 @@ struct ImageView: View {
             .padding(.bottom, 40)
         }
         .sheet(isPresented: $showShareSheet) {
-            ShareSheet(activityItems: [image])
+            ShareSheet(activityItems: [displayImage.image])
         }
         .alert("사진이 앨범에 저장되었습니다", isPresented: $showSaveAlert) {
             Button("확인", role: .cancel) { }
@@ -64,8 +65,9 @@ struct ImageView: View {
 
 #Preview {
     ImageView(
-        image: UIImage(named: "FakePhoto")! // 임시 이미지로 Assets에 있는 FakePhoto 사용함
-        //image: UIImage(systemName: "photo")!, // 임시 이미지
+        displayImage: DisplayImage(
+            id: UUID(),
+            image: UIImage(named: "FakePhoto")!)
     )
 }
 

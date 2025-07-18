@@ -8,17 +8,11 @@
 import Foundation
 import MapKit
 
-struct Mountain: Identifiable, Equatable {
+struct Mountain: Identifiable, Hashable {
     
     let id = UUID()
     let name: String
     let description: String
-    let coordinate: CLLocationCoordinate2D
+    let coordinate: Coordinate
     
-    
-    //Equatable 을 위한 비교.. 근데 그냥 위경도로만 비교함.. id로만 비교해도 되긴 함.
-    static func == (lhs: Mountain, rhs: Mountain) -> Bool {
-            lhs.coordinate.latitude == rhs.coordinate.latitude &&
-            lhs.coordinate.longitude == rhs.coordinate.longitude
-        }
 }

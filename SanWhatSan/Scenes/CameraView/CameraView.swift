@@ -10,19 +10,18 @@ import ARKit
 import RealityKit
 
 struct CameraView: View {
+    @EnvironmentObject private var coordinator: NavigationCoordinator
     @StateObject var viewModel = CameraViewModel()
-    @StateObject var mountainListViewModel = MountainListViewModel()
-    // MARK: 리팩토링?
-    @State var chosenMountain: Mountain?
+//    @StateObject var mountainListViewModel = MountainListViewModel()
+//    @State var chosenMountain: Mountain?
     @State var isImageViewActive = false
     @State var capturedImage: UIImage?
     
     var body: some View {
-        NavigationStack {
             VStack {
                 
                 // TODO: chosenMountain
-                if let selected = chosenMountain ?? mountainListViewModel.closestMountains.first {
+                if let selected = viewModel.selectedMountain {
                     Text("선택한 산: \(selected.name)")
                         .font(.headline)
                         .padding(.top)
@@ -32,22 +31,21 @@ struct CameraView: View {
                         .padding(.top)
                 }
                 
-                NavigationLink{
-                    MountainListView(chosenMountain: $chosenMountain)
+                Button {
+                    coordinator.push(.mountainListView)
                 } label: {
                     Text("다른 산으로 이동")
                         .padding(10)
                 }
-                
                 ARViewContainer(arManager: viewModel.arManager)
                     .edgesIgnoringSafeArea(.all)
 
                 Button("촬영") {
-                    // TODO: navigator.push(ImageView(~~~~))
                     viewModel.arManager.captureSnapshot { image in
                         if let image = image {
-                            capturedImage = image
-                            isImageViewActive = true
+                            coordinator.push(
+                                .imageView(DisplayImage(id: UUID(), image: image))
+                            )
                         }
                     }
                 }
@@ -56,16 +54,8 @@ struct CameraView: View {
             .onAppear {
                 viewModel.startARSession()
             }
-            
-            // TODO: deprecated -> 나중에 navigationDestination으로 바꾸기(리팩토링)
-            NavigationLink(
-                destination: ImageView(image: capturedImage ?? UIImage()),
-                isActive: $isImageViewActive,
-                label: { EmptyView() }
-            )
         }
     }
-}
 
 #Preview {
     CameraView()
