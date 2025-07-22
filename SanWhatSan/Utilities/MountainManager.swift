@@ -73,7 +73,7 @@ final class MountainManager: ObservableObject {
                             longitude: coord.longitude
                         ),
                         distance: 0,
-                        summitMarkerCount: 1
+                        summitMarkerCount: (item.name == "봉좌산" ? 2 : 1) //TODO: 일단 하드코딩, 나중에 모델 개수 카운트해서 넣어야. 
                     )
                 }
                 

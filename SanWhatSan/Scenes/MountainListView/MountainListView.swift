@@ -111,6 +111,7 @@ struct MountainListView: View {
                             .font(.headline)
                             .background(Color.white)
                             .cornerRadius(15)
+                            .font(Font.custom("Pretendard", size: 16).weight(.semibold))
                     }
                     else{
                         ForEach(viewModel.closestMountains) { mountain in
