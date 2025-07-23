@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+//
 
 struct PhotoDetailView: View {
     @Environment(\.dismiss) var dismiss
