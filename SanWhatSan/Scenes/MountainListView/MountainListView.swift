@@ -11,7 +11,7 @@ import MapKit
 struct MountainListView: View {
     
     @EnvironmentObject private var coordinator: NavigationCoordinator
-    @StateObject private var viewModel = MountainListViewModel()
+    @ObservedObject private var viewModel = MountainListViewModel()
     @State private var region = MKCoordinateRegion(
         center: .init(latitude: 36.0, longitude: 128.0),
         latitudinalMeters: 10_000,

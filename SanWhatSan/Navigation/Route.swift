@@ -10,7 +10,7 @@ import SwiftUI
 
 enum Route: Hashable {
     case cameraView
-    case mountainListView
+    case mountainListView(MountainListViewModel)
     case albumView
     case photoDetailView(DisplayImage)
 //    case frameView   
