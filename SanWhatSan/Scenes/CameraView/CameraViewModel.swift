@@ -23,7 +23,7 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        requestLocationAccess()
+        //requestLocationAccess()
         manager.$chosenMountain
             .receive(on: DispatchQueue.main)
             .assign(to: &$selectedMountain)
@@ -38,41 +38,42 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         print("placeModel")
     }
 
+    // MARK: 권한 요청은 LocationService 로 이동, 앱 시작점에서 한 번만 요청
     // MARK: - 위치 권한 요청
-    private func requestLocationAccess() {
-        let status = locationManager.authorizationStatus
-        handleAuthStatus(status)
-    }
-
-    private func handleAuthStatus(_ status: CLAuthorizationStatus) {
-        DispatchQueue.main.async { self.shouldShowAlert = false }
-
-        switch status {
-        case .notDetermined:
-            locationManager.requestWhenInUseAuthorization()
-        case .restricted, .denied:
-            DispatchQueue.main.async { self.shouldShowAlert = true }
-        case .authorizedAlways, .authorizedWhenInUse:
-            locationManager.startUpdatingLocation()
-        default:
-            break
-        }
-    }
-
-    // MARK: - CLLocationManagerDelegate
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        handleAuthStatus(manager.authorizationStatus)
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let currentLocation = locations.last else { return }
-        print("위치 갱신됨: \(currentLocation)")
-
-        DispatchQueue.main.async {
-            self.userLocation = currentLocation
-            self.updateClosestMountain(from: currentLocation)
-        }
-    }
+//    private func requestLocationAccess() {
+//        let status = locationManager.authorizationStatus
+//        handleAuthStatus(status)
+//    }
+//
+//    private func handleAuthStatus(_ status: CLAuthorizationStatus) {
+//        DispatchQueue.main.async { self.shouldShowAlert = false }
+//
+//        switch status {
+//        case .notDetermined:
+//            locationManager.requestWhenInUseAuthorization()
+//        case .restricted, .denied:
+//            DispatchQueue.main.async { self.shouldShowAlert = true }
+//        case .authorizedAlways, .authorizedWhenInUse:
+//            locationManager.startUpdatingLocation()
+//        default:
+//            break
+//        }
+//    }
+//
+//    // MARK: - CLLocationManagerDelegate
+//    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+//        handleAuthStatus(manager.authorizationStatus)
+//    }
+//
+//    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+//        guard let currentLocation = locations.last else { return }
+//        print("위치 갱신됨: \(currentLocation)")
+//
+//        DispatchQueue.main.async {
+//            self.userLocation = currentLocation
+//            self.updateClosestMountain(from: currentLocation)
+//        }
+//    }
 
     private func updateClosestMountain(from location: CLLocation) {
         if let last = lastUpdateLocation,

@@ -10,94 +10,173 @@ import MapKit
 
 struct MountainListView: View {
     
-//    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var coordinator: NavigationCoordinator
     @StateObject private var viewModel = MountainListViewModel()
-//    @Binding var chosenMountain: Mountain?    //binding 변경
-    
     @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 35.85, longitude: 128.57),
-        span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+        center: .init(latitude: 36.0, longitude: 128.0),
+        latitudinalMeters: 10_000,
+        longitudinalMeters: 10_000
     )
-    
-    //지도중심 따라다니는거 ~
-    @State private var cameraPosition: MapCameraPosition = .automatic
     
     
     var body: some View {
+        
+        ZStack{
+            //MARK: 지도
+            MountainMapView(region: $region,
+                            mountains: viewModel.closestMountains)
+            .ignoresSafeArea(.all)
+            
+            LinearGradient(
+                colors: [
+                    Color.white.opacity(0.5),
+                    Color.white.opacity(0.0)
+                ],
+                startPoint: .bottom,
+                endPoint: .top
+            )
+            .ignoresSafeArea()
             VStack{
-                // 이거는 원래 카메라뷰에 들어가야 할 내용인디 일단 이 뷰에다가 할게용 !
-                if let selected = viewModel.selectedMountain {
-                    Text("선택한 산: \(selected.name)")
-                        .font(.headline)
-                        .padding(.top)
-
-                    Map(position: $cameraPosition) {
-                        Marker(selected.name, coordinate: selected.coordinate.clLocationCoordinate2D)
+                // MARK: 상단 바
+                HStack {
+                    
+                    //MARK: 뒤로가기
+                    Button(action: {
+                        coordinator.pop()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(.black)
+                            .padding()
+                            .background(Color.white)
+                            .clipShape(Circle())
                     }
+                    .padding(.leading, 16)
+                    Spacer()
+                    //MARK: 현재 선택된 산은 ~
+                    HStack(spacing:8){
+                        ZStack{
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: .init(colors: [Color.accentColor.opacity(0.8), Color.accentColor.opacity(0.3)]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: 23, height: 23)
+                            
+                            Image(systemName: "mountain.2.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 18, height: 18)
+                                .foregroundColor(.white)
+                        }
+                        if let selected = viewModel.selectedMountain {
+                            Text("현재 선택된 산은")
+                                .font(.headline)
+                                .foregroundColor(.neutrals2)
+                            Text("\(selected.name)")
+                                .font(.headline)
+                                .bold()
+                        }
+                        else{
+                            Text("현재 산이")
+                                .font(.headline)
+                                .foregroundColor(.neutrals2)
+                            Text("아니산!!")
+                                .font(.headline)
+                                .foregroundColor(.accentColor)
+                                .bold()
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.white)
                     .cornerRadius(20)
-                    .frame(height: 300)
-                    .padding(.bottom)
-                } else {
-                    Text("선택된 산 없음")
-                        .font(.headline)
-                        .padding(.top)
+                    .fixedSize()
+                    Spacer()
+                    Spacer()
+
                 }
-                //
-                if viewModel.closestMountains.isEmpty {
-                    Text("주변 100km 이내에 산이 없습니다 🏞️")
-                        .font(.headline)
-                        .padding()
-                }
-                else{
-                    ForEach(viewModel.closestMountains) { mountain in
-                        MountainStackCardView(
-                            title: mountain.name,
-                            description: "위도: \(mountain.coordinate.latitude), 경도: \(mountain.coordinate.longitude)"
-                        ) {
-//                            chosenMountain = mountain
-//                            dismiss()
-                            viewModel.manager.chosenMountain = mountain
-                            coordinator.pop()
+                .padding(.top,8)
+                Spacer()
+                Spacer()
+                Spacer()
+                
+                //MARK: ListCardView
+                //TODO: Modifying state during view update, this will cause undefined behavior. 스택 카드 뷰 수정
+                VStack(spacing: 10){
+                    if viewModel.closestMountains.isEmpty {
+                        Text("주변 100km 이내에 산이 없습니다 🏞️")
+                            .font(.headline)
+                            .background(Color.white)
+                            .cornerRadius(15)
+                    }
+                    else{
+                        ForEach(viewModel.closestMountains) { mountain in
+                            MountainStackCardView(
+                                title: mountain.name,
+                                description: "\(mountain.description)",
+                                distance: mountain.distance,
+                                summitMarker: mountain.summitMarkerCount
+                            ) {
+                                viewModel.manager.chosenMountain = mountain
+                                coordinator.pop()
+                            }   
                         }
                     }
                 }
                 
-            }
-            .onAppear{
-               // viewModel.requestLocationAccess()
+                
                 
             }
-            .onChange(of: viewModel.closestMountains) {
-                if let first = viewModel.closestMountains.first {
-                    cameraPosition = .region(MKCoordinateRegion(
+            
+        }
+        .onAppear{
+            // viewModel.requestLocationAccess()
+            
+        }
+        //MARK: 0.5 = 500 km (임시)
+        .onChange(of: viewModel.closestMountains) { newList in
+            if let first = newList.first {
+                withAnimation {
+                    region = MKCoordinateRegion(
                         center: first.coordinate.clLocationCoordinate2D,
-                        span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-                    ))
+                        span: MKCoordinateSpan(latitudeDelta: 0.5,
+                                               longitudeDelta: 0.5)
+                    )
                 }
             }
-//            .onChange(of: chosenMountain) {
-//                if let selected = chosenMountain {
-//                        withAnimation {
-//                            cameraPosition = .region(
-//                                MKCoordinateRegion(
-//                                    center: selected.coordinate.clLocationCoordinate2D,
-//                                    span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-//                                )
-//                            )
-//                        }
-//                    }
-//            }
-            .alert("위치 권한이 필요합니다", isPresented: $viewModel.shouldShowAlert){
-                Button("OK", role: .cancel){}
-            }
-            .padding(.horizontal)
-            .padding(.vertical)
         }
+        .navigationBarBackButtonHidden(true)
+        //            .onChange(of: viewModel.closestMountains) {
+        //                if let first = viewModel.closestMountains.first {
+        ////                    cameraPosition = .region(MKCoordinateRegion(
+        ////                        center: first.coordinate.clLocationCoordinate2D,
+        ////                        span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+        ////                    ))
+        //                }
+        //            }
+        //            .onChange(of: chosenMountain) {
+        //                if let selected = chosenMountain {
+        //                        withAnimation {
+        //                            cameraPosition = .region(
+        //                                MKCoordinateRegion(
+        //                                    center: selected.coordinate.clLocationCoordinate2D,
+        //                                    span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+        //                                )
+        //                            )
+        //                        }
+        //                    }
+        //            }
+        //MARK: custom Alert
+        .alert("위치 권한이 필요합니다", isPresented: $viewModel.shouldShowAlert){
+            Button("OK", role: .cancel){}
+        }
+        //        .padding(.horizontal)
+        //        .padding(.vertical)
+        
     }
-
-
-
-#Preview {
-    MountainListView()
 }
+
+

@@ -84,11 +84,11 @@ class ARManager {
 
         do {
             // 모델 불러오기
-            let model = try Entity.loadModel(named: "sws1.usd")
+            let model = try Entity.loadModel(named: "sws2.usd")
 
             // 텍스처 불러오기
-            let baseColorTexture = try TextureResource.load(named: "uv.jpg")
-            let normalMapTexture = try TextureResource.load(named: "normalDX.jpg")
+            let baseColorTexture = try TextureResource.load(named: "uv2.jpg")
+            let normalMapTexture = try TextureResource.load(named: "normalDX2.jpg")
 
             // 머티리얼 생성
             var material = PhysicallyBasedMaterial()
