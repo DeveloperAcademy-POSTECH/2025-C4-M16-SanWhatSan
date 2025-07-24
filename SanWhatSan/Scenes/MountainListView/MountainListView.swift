@@ -73,18 +73,18 @@ struct MountainListView: View {
                         }
                         if let selected = viewModel.selectedMountain {
                             Text("현재 선택된 산은")
-                                .font(.headline)
+                                .font(Font.custom("Pretendard", size: 16))
                                 .foregroundColor(.neutrals2)
                             Text("\(selected.name)")
-                                .font(.headline)
+                                .font(Font.custom("Pretendard", size: 16).weight(.bold))
                                 .bold()
                         }
                         else{
                             Text("현재 산이")
-                                .font(.headline)
+                                .font(Font.custom("Pretendard", size: 16))
                                 .foregroundColor(.neutrals2)
                             Text("아니산!!")
-                                .font(.headline)
+                                .font(Font.custom("Pretendard", size: 16).weight(.bold))
                                 .foregroundColor(.accentColor)
                                 .bold()
                         }
@@ -103,14 +103,13 @@ struct MountainListView: View {
                 Spacer()
                 Spacer()
                 
-                //MARK: ListCardView
-                //TODO: Modifying state during view update, this will cause undefined behavior. 스택 카드 뷰 수정
+                //MARK: ListCardView - 산이 없을 경우 스택을 보여주지 않기 때문에 (hifi 기준) 주석 처리 했습니다.
                 VStack(spacing: 10){
                     if viewModel.closestMountains.isEmpty {
-                        Text("주변 100km 이내에 산이 없습니다 🏞️")
-                            .font(.headline)
-                            .background(Color.white)
-                            .cornerRadius(15)
+//                        Text("주변 100km 이내에 산이 없습니다 🏞️")
+//                            .font(Font.custom("Pretendard", size: 16).weight(.bold))
+//                            .background(Color.white)
+//                            .cornerRadius(15)
                     }
                     else{
                         ForEach(viewModel.closestMountains) { mountain in

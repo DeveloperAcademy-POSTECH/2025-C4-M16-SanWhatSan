@@ -104,7 +104,7 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     func updateSummitMarker(for mountainName: String, index: Int = 0) -> SummitMarker {
-        print("in CameraViewModel/updateSummitMarker \(mountainName), index=\(index)")
+        //print("in CameraViewModel/updateSummitMarker \(mountainName), index=\(index)")
         switch mountainName{
         case "도음산":
             return SummitMarker(
