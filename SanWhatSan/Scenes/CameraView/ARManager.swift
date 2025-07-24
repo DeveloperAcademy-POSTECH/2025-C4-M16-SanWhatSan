@@ -132,4 +132,9 @@ class ARManager {
     func captureSnapshot(completion: @escaping (UIImage?) -> Void) {
         arView?.snapshot(saveToHDR: false, completion: completion)
     }
+    
+    func removeModelInScene() {
+        guard let arView else { return }
+        arView.scene.anchors.removeAll()
+    }
 }

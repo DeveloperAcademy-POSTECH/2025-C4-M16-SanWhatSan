@@ -130,7 +130,7 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
                         previewImageFileName: "tmp"
                     )
                 default:
-                    return SummitMarker() // fallback
+                    return SummitMarker() 
                 }
         default:
             return SummitMarker()

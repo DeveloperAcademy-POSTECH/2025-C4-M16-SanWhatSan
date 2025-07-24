@@ -35,6 +35,7 @@ struct SummitMarkerStack: View {
                 ForEach(1..<count, id: \.self) { index in
                     Button {
                         viewModel.summitMarker = viewModel.updateSummitMarker(for: name, index: index)
+                        viewModel.arManager.removeModelInScene()
                         showOtherMarkers = false
                     } label: {
                         let previewImg = viewModel.updateSummitMarker(for: name, index: index).previewImageFileName
