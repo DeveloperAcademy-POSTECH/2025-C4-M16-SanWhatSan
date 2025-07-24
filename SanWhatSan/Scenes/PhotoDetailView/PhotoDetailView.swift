@@ -9,12 +9,8 @@ import SwiftUI
 //
 
 struct PhotoDetailView: View {
-//    @Environment(\.dismiss) var dismiss
-
-//    let image: UIImage
-//    let onDelete: () -> Void
     @EnvironmentObject private var coordinator: NavigationCoordinator
-    let displayImage: DisplayImage  // MARK: displayImage.image로 접근
+    let photo: Photo
 
     @State private var isShareSheetPresented = false
     @State private var showDeleteAlert = false
@@ -61,7 +57,7 @@ struct PhotoDetailView: View {
             GeometryReader { geometry in
                 VStack {
                     Spacer(minLength: 0)
-                    Image(uiImage: displayImage.image)
+                    Image(uiImage: PhotoManager.shared.loadImage(from: photo) ?? UIImage())
                         .resizable()
                         .aspectRatio(9/16, contentMode: .fit)
                         .frame(width: geometry.size.width * 0.85)
@@ -98,7 +94,7 @@ struct PhotoDetailView: View {
 
 // MARK: - 저장 버튼
                 Button(action: {
-                    UIImageWriteToSavedPhotosAlbum(displayImage.image, nil, nil, nil)
+                    UIImageWriteToSavedPhotosAlbum(PhotoManager.shared.loadImage(from: photo)!, nil, nil, nil)
                 }) {
                     Image(systemName: "square.and.arrow.down")
                         .font(.system(size: 22))
@@ -136,8 +132,12 @@ struct PhotoDetailView: View {
                         title: Text("사진 삭제"),
                         message: Text("정말로 이 사진을 삭제하겠산?"),
                         primaryButton: .destructive(Text("삭제")) {
-//                            onDelete()    // TODO: 삭제 로직 구현!!
-//                            dismiss()
+                            let fileURL = FileManager.default
+                                .urls(for: .documentDirectory, in: .userDomainMask)[0]
+                                .appendingPathComponent("LocalPhoto")
+                                .appendingPathComponent(photo.filename)
+                            try? FileManager.default.removeItem(at: fileURL)
+                            
                             coordinator.pop()
                         },
                         secondaryButton: .cancel(Text("취소"))
@@ -151,7 +151,7 @@ struct PhotoDetailView: View {
 
 //MARK: -  공유 시트
         .sheet(isPresented: $isShareSheetPresented) {
-            ShareSheet(activityItems: [displayImage.image])
+            ShareSheet(activityItems: [PhotoManager.shared.loadImage(from: photo)!])
         }
 
 // MARK: -  프레임 선택 시트
@@ -198,10 +198,8 @@ extension UIImage {
 
 // MARK: - 프리뷰
 #Preview {
-    PhotoDetailView(
-//        image: UIImage.solidColor(),
-//        onDelete: {}
-        displayImage: DisplayImage(id: UUID(), image: UIImage.solidColor())
-    )
+//    PhotoDetailView(
+//        photo: Photo(id: UUID(), filename: "", savedDate: Date(), location: Coordinate(latitude: 0, longitude: 0))
+//    )
 }
 

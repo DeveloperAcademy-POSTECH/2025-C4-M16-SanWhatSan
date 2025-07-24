@@ -33,23 +33,51 @@ class PhotoManager {
             return []
         }
 
-        return files.compactMap { url in
-            let id = UUID(uuidString: url.deletingPathExtension().lastPathComponent) ?? UUID()
-            return Photo(id: id, filename: url.lastPathComponent, savedDate: Date(), location: Coordinate(latitude: 35.8602, longitude: 128.5703))
+        let imageFiles = files.filter { $0.pathExtension == "jpg" }
+
+        let photos: [Photo] = imageFiles.compactMap { imageURL in
+            let idString = imageURL.deletingPathExtension().lastPathComponent
+            let id = UUID(uuidString: idString) ?? UUID()
+
+            let jsonURL = imageURL.deletingPathExtension().appendingPathExtension("json")
+
+            var savedDate = Date()
+            var coordinate = Coordinate(latitude: 35.8602, longitude: 128.5703) // default TODO: 나중에 수정
+            
+            if let data = try? Data(contentsOf: jsonURL),
+               let meta = try? JSONDecoder().decode(PhotoMeta.self, from: data) {
+                savedDate = meta.savedDate
+                if let coord = meta.coordinate {
+                    coordinate = coord
+                }
+            }
+
+            return Photo(id: id, filename: imageURL.lastPathComponent, savedDate: savedDate, location: coordinate)
         }
+
+        return photos.sorted { $0.savedDate > $1.savedDate }
     }
+
 
     func loadImage(from photo: Photo) -> UIImage? {
         let path = folderURL.appendingPathComponent(photo.filename)
         return UIImage(contentsOfFile: path.path)
     }
     
-    func saveImageToLocalPhoto(_ image: UIImage) {
+    func saveImageToLocalPhoto(_ image: UIImage, location: Coordinate? = nil) {
         let id = UUID()
         let filename = "\(id).jpg"
-        let url = folderURL.appendingPathComponent(filename)
+        let imageURL = folderURL.appendingPathComponent(filename)
+
         if let data = image.jpegData(compressionQuality: 0.9) {
-            try? data.write(to: url)
+            try? data.write(to: imageURL)
+
+            let metadata = PhotoMeta(savedDate: Date(), coordinate: location)
+            let metadataURL = folderURL.appendingPathComponent("\(id).json")
+
+            if let jsonData = try? JSONEncoder().encode(metadata) {
+                try? jsonData.write(to: metadataURL)
+            }
         }
     }
 
