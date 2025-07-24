@@ -47,6 +47,7 @@ struct AlbumView: View {
                         Button {
                             PhotoManager.shared.saveToPhotoLibrary(Array(selectedPhotos))
                             selectedPhotos.removeAll()
+                            isSelectionMode = false
                         } label: {
                             Image(systemName: "square.and.arrow.down")
                         }
@@ -119,7 +120,7 @@ struct AlbumView: View {
                     message: Text("선택한 사진을 삭제하겠산?"),
                     primaryButton: .destructive(Text("삭제")) {
                         for photo in selectedPhotos {
-                            let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("MyAlbum").appendingPathComponent(photo.filename)
+                            let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("LocalPhoto").appendingPathComponent(photo.filename)
                             try? FileManager.default.removeItem(at: url)
                         }
                         selectedPhotos.removeAll()
@@ -130,6 +131,25 @@ struct AlbumView: View {
             }
             .onAppear {
                 photos = PhotoManager.shared.loadAllPhotos()
+            }
+            .sheet(isPresented: Binding(
+                get: { isShareSheetPresented && !selectedPhotos.isEmpty },
+                set: { newValue in
+                    if !newValue {
+                        isShareSheetPresented = false
+                        selectedPhotos.removeAll()
+                        isSelectionMode = false
+                    }
+                }
+            ), onDismiss: {
+                selectedPhotos.removeAll()
+                isSelectionMode = false
+            }) {
+                let images = selectedPhotos.compactMap { PhotoManager.shared.loadImage(from: $0) }
+                
+                if !images.isEmpty {
+                    ShareSheet(activityItems: images)
+                }
             }
         }
     }
@@ -154,7 +174,7 @@ struct AlbumView: View {
                             selectedPhotos.insert(photo)
                         }
                     } else {
-                        coordinator.push(.photoDetailView(DisplayImage(id: UUID(), image: image)))
+                        coordinator.push(.photoDetailView(photo))
                     }
                 }
 
