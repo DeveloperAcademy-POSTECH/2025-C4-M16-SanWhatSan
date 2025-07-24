@@ -10,10 +10,10 @@ import SwiftUI
 struct MountainStackCardView: View {
         let title: String
         let description: String
-    let distance: Int
-    let summitMarker: Int
+        let distance: Int
+        let summitMarker: Int
     
-    let action: () -> Void
+        let action: () -> Void
 
         var body: some View {
 //            Button(action: action) {
@@ -39,8 +39,7 @@ struct MountainStackCardView: View {
                         .fill(Color.gray.opacity(0.2))
                         .frame(width: 60, height: 60)
                         .overlay(
-                            Image(systemName: "photo")
-                                .foregroundColor(.gray)
+                            Image("tmp")
                         )
                     
                     Rectangle()

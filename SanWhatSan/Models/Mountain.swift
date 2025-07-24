@@ -16,7 +16,8 @@ struct Mountain: Identifiable, Hashable {
     let coordinate: Coordinate
     
     var distance: Int
-    let summitMarkerCount: Int    
+    let summitMarkerCount: Int
+    
 }
 
 enum MountainName: String {

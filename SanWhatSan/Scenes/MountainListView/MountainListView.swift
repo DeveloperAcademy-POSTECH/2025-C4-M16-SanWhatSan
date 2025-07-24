@@ -24,12 +24,14 @@ struct MountainListView: View {
         ZStack{
             //MARK: 지도
             MountainMapView(region: $region,
-                            mountains: viewModel.closestMountains)
+                            mountains: viewModel.closestMountains,
+                            selectedMountain: viewModel.selectedMountain)
             .ignoresSafeArea(.all)
             
             LinearGradient(
                 colors: [
-                    Color.white.opacity(0.5),
+                    Color.white.opacity(0.8),
+                    Color.white.opacity(0.2),
                     Color.white.opacity(0.0)
                 ],
                 startPoint: .bottom,
@@ -141,8 +143,8 @@ struct MountainListView: View {
                 withAnimation {
                     region = MKCoordinateRegion(
                         center: first.coordinate.clLocationCoordinate2D,
-                        span: MKCoordinateSpan(latitudeDelta: 0.5,
-                                               longitudeDelta: 0.5)
+                        span: MKCoordinateSpan(latitudeDelta: 0.3,
+                                               longitudeDelta: 0.3)
                     )
                 }
             }

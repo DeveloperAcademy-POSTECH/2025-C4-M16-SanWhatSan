@@ -9,19 +9,32 @@ import SwiftUI
 
 struct MountainMapAnnotationView: View {
     let mountain: Mountain
-    //let isSelected: Bool
+    let isSelected: Bool
     
     var body: some View {
         VStack(spacing: 4) {
             ZStack {
-                Circle()
-                    .fill(Color.brown)
-                    .frame(width:27, height: 27)
-                Image(systemName: "mountain.2.circle")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 27, height: 27)
-                    .foregroundColor(.white)
+                if isSelected {
+                    Circle()
+                        .fill(Color.accent)
+                        .frame(width:30, height: 30)
+                    Image(systemName: "mountain.2.circle")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.white)
+                }
+                else{
+                    Circle()
+                        .fill(Color.brown)
+                        .frame(width:30, height: 30)
+                    Image(systemName: "mountain.2.circle")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.white)
+                }
+                
             }
             
             Text(mountain.name)
