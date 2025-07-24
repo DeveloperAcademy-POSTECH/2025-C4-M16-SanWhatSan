@@ -21,6 +21,8 @@ struct CameraView: View {
     @State var capturedImage: UIImage?
     @State private var showFlash = false
 
+    
+
     var body: some View {
         VStack {
             HStack(alignment: .center, spacing: 95) {
@@ -106,15 +108,11 @@ struct CameraView: View {
                                 .shadow(color: .black.opacity(0.1), radius: 7.5, x: 0, y: -4)
                         }
                         .padding(.bottom, 32)
-
+                        //
                         Spacer()
-
-                        Button {
-                            viewModel.summitMarker = viewModel.updateSummitMarker(for: "도음산")
-                        } label: {
-                            Text("정상석")
-                        }
-                        .padding(35)
+                        
+                        SummitMarkerStack(viewModel: viewModel)
+                        
                     }
                 }
             }
