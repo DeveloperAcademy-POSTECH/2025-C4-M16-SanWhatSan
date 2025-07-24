@@ -15,6 +15,7 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var selectedMountain: Mountain?
     @Published var userLocation: CLLocation?
     @Published var shouldShowAlert = false
+    @Published var summitMarker: SummitMarker?
 
     private var lastUpdateLocation: CLLocation?
     let arManager = ARManager()
@@ -23,10 +24,10 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        //requestLocationAccess()
         manager.$chosenMountain
             .receive(on: DispatchQueue.main)
             .assign(to: &$selectedMountain)
+       
     }
 
     func startARSession() {
@@ -92,4 +93,31 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
 
         locationManager.stopUpdatingLocation()
     }
+    
+    func updateSummitMarker(for mountainName: String, isFallback: Bool = false) -> SummitMarker {
+        switch mountainName{
+        case "도음산":
+            return SummitMarker(
+                modelFileName: "sws1.usd",
+                textureFileName: "normalDX.jpg",
+                overlayFileName: "uv.jpg"
+            )
+        case "봉좌산":
+            if isFallback {
+                return SummitMarker(
+                    modelFileName: "sws1.usd",
+                    textureFileName: "normalDX.jpg",
+                    overlayFileName: "uv.jpg"
+                )
+            } else {
+                return SummitMarker(
+                    modelFileName: "sws2.usd",
+                    textureFileName: "normalDX2.jpg",
+                    overlayFileName: "uv2.jpg")
+            }
+        default:
+            return SummitMarker()
+        }
+    }
+        
 }

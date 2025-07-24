@@ -88,37 +88,6 @@ class MountainListViewModel: NSObject, ObservableObject, CLLocationManagerDelega
         self.closestMountains = manager.getClosestMountains(from: location)
         locationManager.stopUpdatingLocation()
     }
-    
-    func summitMarker(for mountainName: String, isFallback: Bool = false) -> SummitMarker {
-            switch mountainName {
-            case "도음산":
-                return SummitMarker(
-                    modelFileName: "sws1.usd",
-                    textureFileName: "normalDX.jpg",
-                    overlayFileName: "uv.jpg"
-                )
-            case "봉좌산":
-                if isFallback {
-                    return SummitMarker(
-                        modelFileName: "sws2.usd",
-                        textureFileName: "normalDX2.jpg",
-                        overlayFileName: "uv2.jpg"
-                    )
-                } else {
-                    return SummitMarker(
-                        modelFileName: "sws1.usd",
-                        textureFileName: "normalDX.jpg",
-                        overlayFileName: "uv.jpg"
-                    )
-                }
-            default:
-                return SummitMarker(
-                    modelFileName: "sws2.usd",
-                    textureFileName: "normalDX2.jpg",
-                    overlayFileName: "uv2.jpg"
-                )
-            }
-        }
 
 }
 

@@ -11,6 +11,7 @@ import RealityKit
 class ARManager {
     var arView: ARView?
     lazy var coordinator = ARCoordinator(self)
+    var summitMarker: SummitMarker?
     
     func setupARView() -> ARView {
         let view = ARView(frame: .zero)
