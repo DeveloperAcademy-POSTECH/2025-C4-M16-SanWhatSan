@@ -10,43 +10,41 @@ import SwiftUI
 struct SummitMarkerStack: View {
     @StateObject var viewModel: CameraViewModel
     @State private var showOtherMarkers = false
-    
-    var body : some View {
-        ZStack(alignment: .bottom){
-            let count = viewModel.selectedMountain?.summitMarkerCount ?? 1
 
-            ForEach(0..<count, id: \.self) { index in
-                if showOtherMarkers && index > 0 {
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            let count = viewModel.selectedMountain?.summitMarkerCount ?? 1
+            let name = viewModel.selectedMountain?.name ?? ""
+
+            // 메인 버튼 (index 0)
+            Button {
+                viewModel.summitMarker = viewModel.updateSummitMarker(for: name, index: 0)
+                if count > 1 {
+                    withAnimation {
+                        showOtherMarkers.toggle()
+                    }
+                }
+            } label: {
+                let previewImg = viewModel.updateSummitMarker(for: name, index: 0).previewImageFileName
+                SummitMarkerButton(previewImg: previewImg)
+            }
+            .padding(35)
+
+            // 위로 펼쳐지는 버튼들 (index > 0)
+            if showOtherMarkers {
+                ForEach(1..<count, id: \.self) { index in
                     Button {
-                        let isFallback = index == 1
-                        let name = viewModel.selectedMountain?.name ?? ""
-                        viewModel.summitMarker = viewModel.updateSummitMarker(for: name, isFallback: isFallback)
+                        viewModel.summitMarker = viewModel.updateSummitMarker(for: name, index: index)
                         showOtherMarkers = false
                     } label: {
-                        SummitMarkerButton(thumbImg: viewModel.summitMarker?.previewImageFileName ?? "tmp")
+                        let previewImg = viewModel.updateSummitMarker(for: name, index: index).previewImageFileName
+                        SummitMarkerButton(previewImg: previewImg)
                     }
                     .offset(y: CGFloat(-100 * index))
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .animation(.spring(response: 0.4, dampingFraction: 0.6), value: showOtherMarkers)
                 }
             }
-            Button {
-                if (viewModel.selectedMountain?.summitMarkerCount ?? 1) > 1 {
-                    withAnimation {
-                        showOtherMarkers.toggle()
-                    }
-                } else {
-                    let name = viewModel.selectedMountain?.name ?? ""
-                    viewModel.summitMarker = viewModel.updateSummitMarker(for: name, isFallback: false)
-                }
-            } label: {
-                
-                //TODO: summitMarker 가 할당되기 전에 이 뷰를 그려서 기본 sws로 나옴.. default 이미지 받으면 바꾸기
-                SummitMarkerButton(thumbImg:viewModel.summitMarker?.previewImageFileName ?? "sws")
-            }
-            .padding(35)
         }
     }
 }
-
-

@@ -9,8 +9,7 @@ import SwiftUICore
 import SwiftUI
 
 struct SummitMarkerButton: View {
-    var tmpImg = "tmp"
-    var thumbImg: String?
+    var previewImg: String?
     
     var body: some View {
         ZStack {
@@ -19,7 +18,7 @@ struct SummitMarkerButton: View {
                 .fill(Color.white.opacity(0.3))
                 .frame(width: 55, height: 55)
 
-            Image(thumbImg ?? tmpImg)
+            Image(previewImg ?? "tmp")
                 .frame(width: 40, height: 40)
             
         }

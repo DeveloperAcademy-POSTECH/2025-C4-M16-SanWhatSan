@@ -103,27 +103,35 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         locationManager.stopUpdatingLocation()
     }
     
-    func updateSummitMarker(for mountainName: String, isFallback: Bool = false) -> SummitMarker {
+    func updateSummitMarker(for mountainName: String, index: Int = 0) -> SummitMarker {
+        print("in CameraViewModel/updateSummitMarker \(mountainName), index=\(index)")
         switch mountainName{
         case "도음산":
             return SummitMarker(
                 modelFileName: "sws1.usd",
                 textureFileName: "normalDX.jpg",
-                overlayFileName: "uv.jpg"
+                overlayFileName: "uv.jpg",
+                previewImageFileName: "tmp"
             )
         case "봉좌산":
-            if isFallback {
-                return SummitMarker(
-                    modelFileName: "sws1.usd",
-                    textureFileName: "normalDX.jpg",
-                    overlayFileName: "uv.jpg"
-                )
-            } else {
-                return SummitMarker(
-                    modelFileName: "sws2.usd",
-                    textureFileName: "normalDX2.jpg",
-                    overlayFileName: "uv2.jpg")
-            }
+                switch index {
+                case 0:
+                    return SummitMarker(
+                        modelFileName: "sws2.usd",
+                        textureFileName: "normalDX2.jpg",
+                        overlayFileName: "uv2.jpg",
+                        previewImageFileName: "tmp"
+                    )
+                case 1:
+                    return SummitMarker(
+                        modelFileName: "sws1.usd",
+                        textureFileName: "normalDX.jpg",
+                        overlayFileName: "uv.jpg",
+                        previewImageFileName: "tmp"
+                    )
+                default:
+                    return SummitMarker() // fallback
+                }
         default:
             return SummitMarker()
         }
