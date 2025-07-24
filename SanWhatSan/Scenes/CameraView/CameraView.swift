@@ -110,7 +110,7 @@ struct CameraView: View {
                         Spacer()
 
                         Button {
-
+                            viewModel.summitMarker = viewModel.updateSummitMarker(for: "도음산")
                         } label: {
                             Text("정상석")
                         }

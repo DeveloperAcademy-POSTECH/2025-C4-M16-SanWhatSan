@@ -11,7 +11,8 @@ import RealityKit
 class ARManager {
     var arView: ARView?
     lazy var coordinator = ARCoordinator(self)
-    var summitMarker: SummitMarker?
+    var marker: SummitMarker?
+
     
     func setupARView() -> ARView {
         let view = ARView(frame: .zero)
@@ -78,18 +79,24 @@ class ARManager {
         guard let arView,
               let rayResult = arView.raycast(from: point, allowing: .estimatedPlane, alignment: .horizontal).first else {
             print("Raycast 실패")
+            //TODO: 바닥면을 인식하지 못했습니다.
             return
         }
 
         let anchor = AnchorEntity(world: rayResult.worldTransform)
 
         do {
+            if marker == nil {
+                marker = SummitMarker()
+            }
+            guard let marker else { print("ARManager/placeModel: marker is nil"); return }
+            
             // 모델 불러오기
-            let model = try Entity.loadModel(named: "sws2.usd")
+            let model = try Entity.loadModel(named: marker.modelFileName)
 
             // 텍스처 불러오기
-            let baseColorTexture = try TextureResource.load(named: "uv2.jpg")
-            let normalMapTexture = try TextureResource.load(named: "normalDX2.jpg")
+            let baseColorTexture = try TextureResource.load(named: marker.overlayFileName)
+            let normalMapTexture = try TextureResource.load(named: marker.textureFileName)
 
             // 머티리얼 생성
             var material = PhysicallyBasedMaterial()

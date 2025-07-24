@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreLocation
+import Combine
 
 class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     private var locationManager = CLLocationManager()
@@ -18,7 +19,9 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var summitMarker: SummitMarker?
 
     private var lastUpdateLocation: CLLocation?
-    let arManager = ARManager()
+    var arManager = ARManager()
+    private var cancellables = Set<AnyCancellable>()
+
 
     override init() {
         super.init()
@@ -27,6 +30,12 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         manager.$chosenMountain
             .receive(on: DispatchQueue.main)
             .assign(to: &$selectedMountain)
+        
+        $summitMarker
+            .sink { [weak self] newMarker in
+                self?.arManager.marker = newMarker
+            }
+            .store(in: &cancellables)
        
     }
 
@@ -119,5 +128,9 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
             return SummitMarker()
         }
     }
+    
+//    func updateARMarker(){
+//        arManager.marker = summitMarker
+//    }
         
 }
