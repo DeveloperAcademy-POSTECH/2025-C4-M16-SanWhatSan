@@ -12,6 +12,8 @@ struct SanWhatSanApp: App {
 //    @StateObject private var LocationViewModel = MountainListViewModel()
     //@StateObject private var cameraViewModel = CameraViewModel()
     @StateObject var coordinator = NavigationCoordinator()
+    @State private var showTutorial = true
+
     var locationService = LocationService.shared
     
     var body: some Scene {
@@ -25,6 +27,13 @@ struct SanWhatSanApp: App {
                 .onAppear{
                     locationService.requestLocationAccess()
                 }
+                .fullScreenCover(isPresented: $showTutorial) {
+                    CameraWrapperView {
+                        showTutorial = false
+                    }
+                }
         }
     }
 }
+import SwiftUI
+
