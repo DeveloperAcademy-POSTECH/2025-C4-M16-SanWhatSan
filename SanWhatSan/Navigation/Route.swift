@@ -12,6 +12,6 @@ enum Route: Hashable {
     case cameraView
     case mountainListView
     case albumView
-    case photoDetailView(DisplayImage)
+    case photoDetailView(Photo)
 //    case frameView   
 }

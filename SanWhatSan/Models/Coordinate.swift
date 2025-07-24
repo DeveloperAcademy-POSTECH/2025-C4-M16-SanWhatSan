@@ -8,7 +8,7 @@
 import Foundation
 import CoreLocation
 
-struct Coordinate: Hashable {
+struct Coordinate: Hashable, Codable {
     let latitude: CLLocationDegrees
     let longitude: CLLocationDegrees
     
