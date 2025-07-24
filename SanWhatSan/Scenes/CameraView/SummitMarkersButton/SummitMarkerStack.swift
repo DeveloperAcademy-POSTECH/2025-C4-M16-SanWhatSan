@@ -11,12 +11,6 @@ struct SummitMarkerStack: View {
     @StateObject var viewModel: CameraViewModel
     @State private var showOtherMarkers = false
     
-    let summitMarkerCandidates: [(name: String, imageName: String)] = [
-        ("도음산", "tmp"),
-        ("봉좌산", "tmp2"),
-        ("기본", "tmp2")
-    ]
-    
     var body : some View {
         ZStack(alignment: .bottom){
             let count = viewModel.selectedMountain?.summitMarkerCount ?? 1
@@ -24,12 +18,12 @@ struct SummitMarkerStack: View {
             ForEach(0..<count, id: \.self) { index in
                 if showOtherMarkers && index > 0 {
                     Button {
-                        let isFallback = index == 1 // index 기준으로 fallback 구분
+                        let isFallback = index == 1
                         let name = viewModel.selectedMountain?.name ?? ""
                         viewModel.summitMarker = viewModel.updateSummitMarker(for: name, isFallback: isFallback)
                         showOtherMarkers = false
                     } label: {
-                        SummitMarkerButton(thumbImg: "tmp")
+                        SummitMarkerButton(thumbImg: viewModel.summitMarker?.previewImageFileName ?? "tmp")
                     }
                     .offset(y: CGFloat(-100 * index))
                     .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -46,7 +40,9 @@ struct SummitMarkerStack: View {
                     viewModel.summitMarker = viewModel.updateSummitMarker(for: name, isFallback: false)
                 }
             } label: {
-                SummitMarkerButton()
+                
+                //TODO: summitMarker 가 할당되기 전에 이 뷰를 그려서 기본 sws로 나옴.. default 이미지 받으면 바꾸기
+                SummitMarkerButton(thumbImg:viewModel.summitMarker?.previewImageFileName ?? "sws")
             }
             .padding(35)
         }

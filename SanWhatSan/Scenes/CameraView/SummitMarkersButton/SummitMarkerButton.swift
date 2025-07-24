@@ -15,7 +15,7 @@ struct SummitMarkerButton: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(Color.white.opacity(0.5), lineWidth: 2)
+                .stroke(Color.white.opacity(0.4), lineWidth: 2)
                 .fill(Color.white.opacity(0.3))
                 .frame(width: 55, height: 55)
 
