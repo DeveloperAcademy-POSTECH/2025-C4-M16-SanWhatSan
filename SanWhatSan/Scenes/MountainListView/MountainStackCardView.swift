@@ -8,72 +8,56 @@
 import SwiftUI
 
 struct MountainStackCardView: View {
-        let title: String
-        let description: String
-        let distance: Int
-        let summitMarker: Int
+    let title: String
+    let description: String
+    let distance: Int
+    let summitMarker: Int
     
-        let action: () -> Void
+    let action: () -> Void
+    
+    var body: some View {
 
-        var body: some View {
-//            Button(action: action) {
-//                VStack(alignment: .leading, spacing: 8) {
-//                    Text(title)
-//                        .font(.title3)
-//                        .fontWeight(.bold)
-//
-//                    Text(description)
-//                        .font(.body)
-//                        .foregroundColor(.secondary)
-//                }
-//                .padding()
-//                .frame(maxWidth: .infinity)
-//                .background(Color(.systemGray6))
-//                .cornerRadius(16)
-//                .shadow(radius: 4)
-//            }
-//            .buttonStyle(PlainButtonStyle())
-            Button(action: action) {
-                HStack(spacing: 16) {
-                    Circle()
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(width: 60, height: 60)
-                        .overlay(
-                            Image("tmp")
-                        )
-                    
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 1, height: 60)
-                    
-
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(title)
-                            .font(.headline)
-                            .foregroundColor(.black)
-                        //TODO: 거리 계산 변수 추가
-                        Text("\(distance) km | \(description)")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                        //TODO: 정상비 몇개 변수 추가
-                        Text("정상비 \(summitMarker)개 있음")
-                            .font(.caption)
-                            .padding(.vertical, 4)
-                            .padding(.horizontal, 10)
-                            .background(Color.accentColor)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
-                    Spacer()
+        Button(action: action) {
+            HStack(spacing: 16) {
+                Circle()
+                    .fill(Color.gray.opacity(0.2))
+                    .frame(width: 60, height: 60)
+                    .overlay(
+                        Image("tmp")
+                    )
+                
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 1, height: 60)
+                
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(title)
+                        .font(.headline)
+                        .foregroundColor(.black)
+                    //TODO: 거리 계산 변수 추가
+                    Text("\(distance) m | \(description)")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                    //TODO: 정상비 몇개 변수 추가
+                    Text("정상비 \(summitMarker)개 있음")
+                        .font(.caption)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 10)
+                        .background(Color.accentColor)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
                 }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.white.opacity(0.95))
-                .cornerRadius(30)
-                .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 4)
+                Spacer()
             }
-            .padding(.horizontal, 20) // ← 여기가 핵심
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.white.opacity(0.95))
+            .cornerRadius(30)
+            .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 4)
         }
+        .padding(.horizontal, 20) // ← 여기가 핵심
+    }
 }
 
 //#Preview {

@@ -73,7 +73,6 @@ final class MountainManager: ObservableObject {
                 
                 DispatchQueue.main.async{
                     found.append(contentsOf: results)
-                    //print("최종 Mountains: \(results)")
                 }
             }
         }
@@ -84,7 +83,7 @@ final class MountainManager: ObservableObject {
         
     }
     
-    func getClosestMountains(from location: CLLocation, within radius: Double = 50_000) -> [Mountain] {
+    func getClosestMountains(from location: CLLocation, within radius: Double = 30_000) -> [Mountain] {
         return mountains.compactMap { mountain in
             let distance = CLLocation(
                 latitude: mountain.coordinate.latitude,
