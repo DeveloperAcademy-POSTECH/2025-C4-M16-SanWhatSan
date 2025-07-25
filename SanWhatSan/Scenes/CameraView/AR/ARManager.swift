@@ -11,8 +11,8 @@ import RealityKit
 class ARManager {
     var arView: ARView?
     lazy var coordinator = ARCoordinator(self)
+    private var lastScale: Float = 1.0
     var marker: SummitMarker?
-
     
     func setupARView() -> ARView {
         let view = ARView(frame: .zero)
@@ -42,6 +42,9 @@ class ARManager {
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
+        
+        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
+        view.addGestureRecognizer(pinchGesture)
 
         return view
     }
@@ -52,6 +55,25 @@ class ARManager {
         let location = sender.location(in: view)
         
         placeModel(at: location)
+    }
+    
+    @objc private func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+        guard let arView = arView else { return }
+
+        // 현재 씬에서 첫 번째 Anchor의 첫 번째 자식 모델을 대상으로 한다고 가정
+        guard let anchor = arView.scene.anchors.first,
+              let model = anchor.children.first as? ModelEntity else { return }
+
+        switch gesture.state {
+        case .began:
+            lastScale = model.scale.x  // 현재 스케일 저장
+        case .changed:
+            let scaleFactor = Float(gesture.scale)
+            let newScale = lastScale * scaleFactor
+            model.setScale([newScale, newScale, newScale], relativeTo: nil)
+        default:
+            break
+        }
     }
 
     func startSession() {
