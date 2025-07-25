@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-//
 
 struct PhotoDetailView: View {
     @EnvironmentObject private var coordinator: NavigationCoordinator
@@ -15,11 +14,13 @@ struct PhotoDetailView: View {
     @State private var isShareSheetPresented = false
     @State private var showDeleteAlert = false
 
-//MARK: - 프레임 선택 관련 상태
+    @State private var showSaveToast = false   // ✅ 저장 완료 토스트
+    @State private var showDeleteToast = false // ✅ 삭제 완료 토스트
+
+    //MARK: - 프레임 선택 관련 상태
     @State private var isFramePickerPresented = false
     @State private var selectedFrame: UIImage? = nil
 
-//MARK: - 예시 프레임 이미지 배열 (실제 프로젝트에선 Asset 이미지로 대체)
     let frameOptions: [UIImage] = [
         UIImage(named: "frame00"),
         UIImage(named: "frame01"),
@@ -33,52 +34,46 @@ struct PhotoDetailView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-// MARK: - 상단 바 (뒤로 가기)
-            HStack {
-                Button(action: {
-                    coordinator.pop()
-                }) {
-                    Image(systemName: "arrow.left")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 20, height: 20)
-                        .foregroundColor(.black)
-                        .padding(12)
-                        .background(Color(UIColor.systemGray5))
-                        .clipShape(Circle())
-                }
-                Spacer()
-                Spacer().frame(width: 40) // 균형 맞추기용
-            }
-            .padding(.horizontal)
-            .padding(.top, 16)
+            // MARK: - 이미지 영역
+            VStack {
+                Spacer(minLength: 0)
 
-// MARK: - 이미지 영역
-            GeometryReader { geometry in
-                VStack {
-                    Spacer(minLength: 0)
-                    Image(uiImage: PhotoManager.shared.loadImage(from: photo) ?? UIImage())
-                        .resizable()
-                        .aspectRatio(9/16, contentMode: .fit)
-                        .frame(width: geometry.size.width * 0.85)
-                        .frame(maxWidth: geometry.size.width)
-                        .clipped()
-                        // ✅ 프레임 오버레이
-                        .overlay {
-                            if let frame = selectedFrame {
-                                Image(uiImage: frame)
+                GeometryReader { geometry in
+                    let width = geometry.size.width * 0.82
+                    let height = width * (16 / 9)
+
+                    VStack {
+                        Spacer().frame(height: 15) // 위에서 15 떨어지게
+                        HStack {
+                            Spacer()
+                            ZStack {
+                                Image(uiImage: PhotoManager.shared.loadImage(from: photo) ?? UIImage())
                                     .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .opacity(0.9)
+                                    .aspectRatio(9/16, contentMode: .fit)
+                                    .frame(width: width, height: height)
+                                    .clipped()
+
+                                if let frame = selectedFrame {
+                                    Image(uiImage: frame)
+                                        .resizable()
+                                        .aspectRatio(9/16, contentMode: .fit)
+                                        .frame(width: width, height: height)
+                                        .clipped()
+                                        .opacity(0.9)
+                                }
                             }
+                            Spacer()
                         }
-                    Spacer(minLength: 0)
+                        Spacer()
+                    }
+                    .frame(width: geometry.size.width, height: geometry.size.height)
                 }
+
+                Spacer(minLength: 0)
             }
 
-// MARK: - 하단 버튼들
+            // MARK: - 하단 버튼들
             HStack {
-// MARK: - 프레임 꾸미기 버튼
                 Button(action: {
                     isFramePickerPresented = true
                 }) {
@@ -92,9 +87,17 @@ struct PhotoDetailView: View {
 
                 Spacer()
 
-// MARK: - 저장 버튼
                 Button(action: {
-                    UIImageWriteToSavedPhotosAlbum(PhotoManager.shared.loadImage(from: photo)!, nil, nil, nil)
+                    if let image = PhotoManager.shared.loadImage(from: photo) {
+                        let finalImage = merge(photo: image, with: selectedFrame)
+                        UIImageWriteToSavedPhotosAlbum(finalImage, nil, nil, nil)
+
+                        // ✅ 저장 토스트 표시
+                        showSaveToast = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            showSaveToast = false
+                        }
+                    }
                 }) {
                     Image(systemName: "square.and.arrow.down")
                         .font(.system(size: 22))
@@ -104,7 +107,6 @@ struct PhotoDetailView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 25))
                 }
 
-// MARK: - 공유 버튼
                 Button(action: {
                     isShareSheetPresented = true
                 }) {
@@ -116,7 +118,6 @@ struct PhotoDetailView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 25))
                 }
 
-// MARK: - 삭제 버튼
                 Button(action: {
                     showDeleteAlert = true
                 }) {
@@ -137,33 +138,63 @@ struct PhotoDetailView: View {
                                 .appendingPathComponent("LocalPhoto")
                                 .appendingPathComponent(photo.filename)
                             try? FileManager.default.removeItem(at: fileURL)
-                            
-                            coordinator.pop()
+
+                            // ✅ 삭제 토스트 표시
+                            showDeleteToast = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                showDeleteToast = false
+                                coordinator.pop()
+                            }
                         },
                         secondaryButton: .cancel(Text("취소"))
                     )
                 }
             }
             .padding(.horizontal, 40)
-            .padding(.bottom, 24)
+            .padding(.bottom, 50)
         }
         .background(Color.white.ignoresSafeArea())
-
-//MARK: -  공유 시트
-        .sheet(isPresented: $isShareSheetPresented) {
-            ShareSheet(activityItems: [PhotoManager.shared.loadImage(from: photo)!])
+        .overlay(
+            Group {
+                if showSaveToast {
+                    toastView(text: "사진이 저장되었산")
+                } else if showDeleteToast {
+                    toastView(text: "사진이 삭제되었산")
+                }
+            }
+        )
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    coordinator.pop()
+                } label: {
+                    Image(systemName: "arrow.left")
+                        .font(Font.custom("SF Pro", size: 16))
+                        .foregroundColor(.black)
+                        .frame(width: 35, height: 35)
+                        .background(Color.neutrals5)
+                        .clipShape(Circle())
+                }
+            }
+            
+            ToolbarItem(placement: .principal) {
+                Text("\(formatDate(photo.savedDate))")
+            }
         }
-
-// MARK: -  프레임 선택 시트
+        .sheet(isPresented: $isShareSheetPresented) {
+            if let image = PhotoManager.shared.loadImage(from: photo) {
+                ShareSheet(activityItems: [image])
+            }
+        }
         .sheet(isPresented: $isFramePickerPresented) {
             VStack {
-                
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
-                        ForEach(frameOptions, id: \.self) { frame in
+                        ForEach(frameOptions, id: \ .self) { frame in
                             Image(uiImage: frame)
                                 .resizable()
-                                .frame(width: 80, height: 80)
+                                .frame(width: 66, height: 66)
                                 .border(Color.gray, width: 0.2)
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                                 .overlay(
@@ -172,7 +203,6 @@ struct PhotoDetailView: View {
                                 )
                                 .onTapGesture {
                                     selectedFrame = frame
-                                    isFramePickerPresented = false
                                 }
                         }
                     }
@@ -183,18 +213,72 @@ struct PhotoDetailView: View {
             .presentationDetents([.height(113)])
         }
     }
-}
 
-// MARK: - 대체 이미지 (프리뷰용)
-extension UIImage {
-    static func solidColor(_ color: UIColor = .gray, size: CGSize = CGSize(width: 100, height: 100)) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(size: size)
-        return renderer.image { context in
-            color.setFill()
-            context.fill(CGRect(origin: .zero, size: size))
+    // ✅ 토스트 뷰 추가
+    @ViewBuilder
+    private func toastView(text: String) -> some View {
+        VStack {
+            Spacer()
+
+            HStack(spacing: 8) {
+                Image(systemName: "paperplane.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 16, height: 16)
+                    .foregroundColor(Color("AccentColor"))
+                Text(text)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(Color("Neutrals2"))
+            }
+            .padding(.vertical, 10)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.white)
+            )
+            .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+            .padding(.bottom, 570)
+            .transition(.opacity)
+            .animation(.easeInOut(duration: 0.3), value: text)
         }
     }
 }
+
+func merge(photo: UIImage, with frame: UIImage?) -> UIImage {
+    let size = photo.size
+    UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+
+    photo.draw(in: CGRect(origin: .zero, size: size))
+
+    if let frame = frame {
+        frame.draw(in: CGRect(origin: .zero, size: size), blendMode: .normal, alpha: 0.9)
+    }
+
+    let combinedImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+
+    return combinedImage ?? photo
+}
+
+func formatDate(_ date: Date) -> String {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ko_KR") // 한국어 설정
+    formatter.dateFormat = "yyyy년 M월 d일"
+    return formatter.string(from: date)
+}
+
+
+
+// MARK: - 대체 이미지 (프리뷰용)
+//extension UIImage {
+//    static func solidColor(_ color: UIColor = .gray, size: CGSize = CGSize(width: 100, height: 100)) -> UIImage {
+//        let renderer = UIGraphicsImageRenderer(size: size)
+//        return renderer.image { context in
+//            color.setFill()
+//            context.fill(CGRect(origin: .zero, size: size))
+//        }
+//    }
+//}
 
 // MARK: - 프리뷰
 #Preview {
