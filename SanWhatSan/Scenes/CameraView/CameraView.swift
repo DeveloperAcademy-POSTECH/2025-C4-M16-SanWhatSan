@@ -35,7 +35,8 @@ struct CameraView: View {
                             .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78)) +
                         Text("\(selected.name)")
                             .font(Font.custom("Pretendard", size: 16).weight(.bold))
-                            .foregroundColor(.black) +
+                            .foregroundColor(.black)
+                                +
                         Text("이산")
                             .font(Font.custom("Pretendard", size: 16).weight(.semibold))
                             .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
@@ -78,12 +79,21 @@ struct CameraView: View {
                 VStack {
                     Spacer()
                     HStack {
-                        Button {
-                            coordinator.push(.albumView)
-                        } label: {
-                            Text("앨범")
-                        }
-                        .padding(35)
+                        Image(uiImage: PhotoManager.shared.loadRecentImage())
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 60, height: 60)
+                            .clipped()
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.white, lineWidth: 2)
+                            )
+                            .onTapGesture {
+                                coordinator.push(.albumView)
+                            }
+                            .padding(.leading, 32)
+                            .padding(.bottom, 32)
 
                         Spacer()
 
@@ -108,7 +118,7 @@ struct CameraView: View {
                                 .shadow(color: .black.opacity(0.1), radius: 7.5, x: 0, y: -4)
                         }
                         .padding(.bottom, 32)
-                        //
+                        
                         Spacer()
                         
                         SummitMarkerStack(viewModel: viewModel)
