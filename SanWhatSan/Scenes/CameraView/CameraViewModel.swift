@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreLocation
+import Combine
 
 class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     private var locationManager = CLLocationManager()
@@ -15,18 +16,27 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var selectedMountain: Mountain?
     @Published var userLocation: CLLocation?
     @Published var shouldShowAlert = false
+    @Published var summitMarker: SummitMarker?
 
     private var lastUpdateLocation: CLLocation?
-    let arManager = ARManager()
+    var arManager = ARManager()
+    private var cancellables = Set<AnyCancellable>()
+
 
     override init() {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        //requestLocationAccess()
         manager.$chosenMountain
             .receive(on: DispatchQueue.main)
             .assign(to: &$selectedMountain)
+        
+        $summitMarker
+            .sink { [weak self] newMarker in
+                self?.arManager.marker = newMarker
+            }
+            .store(in: &cancellables)
+       
     }
 
     func startARSession() {
@@ -92,4 +102,43 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
 
         locationManager.stopUpdatingLocation()
     }
+    
+    func updateSummitMarker(for mountainName: String, index: Int = 0) -> SummitMarker {
+        //print("in CameraViewModel/updateSummitMarker \(mountainName), index=\(index)")
+        switch mountainName{
+        case "도음산":
+            return SummitMarker(
+                modelFileName: "sws1.usd",
+                textureFileName: "normalDX.jpg",
+                overlayFileName: "uv.jpg",
+                previewImageFileName: "tmp"
+            )
+        case "봉좌산":
+                switch index {
+                case 0:
+                    return SummitMarker(
+                        modelFileName: "sws2.usd",
+                        textureFileName: "normalDX2.jpg",
+                        overlayFileName: "uv2.jpg",
+                        previewImageFileName: "tmp"
+                    )
+                case 1:
+                    return SummitMarker(
+                        modelFileName: "sws1.usd",
+                        textureFileName: "normalDX.jpg",
+                        overlayFileName: "uv.jpg",
+                        previewImageFileName: "tmp"
+                    )
+                default:
+                    return SummitMarker() 
+                }
+        default:
+            return SummitMarker()
+        }
+    }
+    
+//    func updateARMarker(){
+//        arManager.marker = summitMarker
+//    }
+        
 }

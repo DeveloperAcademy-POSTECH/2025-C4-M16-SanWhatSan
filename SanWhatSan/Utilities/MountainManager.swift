@@ -20,13 +20,6 @@ final class MountainManager: ObservableObject {
     @Published var chosenMountain: Mountain?
 
     private init() {
-//        self.mountains = [
-//            
-//            //TODO: 추후 삭제
-//            Mountain(name: "운제산", description: "경북", coordinate: Coordinate(latitude: 35.8401, longitude: 128.5554), distance: 100, summitMarkerCount: 1),
-//            Mountain(name: "도음산", description: "경북", coordinate: Coordinate(latitude: 35.8725, longitude: 128.6021), distance: 100, summitMarkerCount: 1),
-//            Mountain(name: "봉좌산", description: "경북", coordinate: Coordinate(latitude: 35.8602, longitude: 128.5703), distance: 100, summitMarkerCount: 1)
-//        ]
         self.mountainNames = [
             "운제산", "도음산", "봉좌산"
         ]
@@ -73,13 +66,13 @@ final class MountainManager: ObservableObject {
                             longitude: coord.longitude
                         ),
                         distance: 0,
-                        summitMarkerCount: 1
+                        summitMarkerCount: (item.name == "봉좌산" ? 2 : 1)
+                        //TODO: 일단 하드코딩, 나중에 모델 개수 카운트해서 넣어야.
                     )
                 }
                 
                 DispatchQueue.main.async{
                     found.append(contentsOf: results)
-                    //print("최종 Mountains: \(results)")
                 }
             }
         }
@@ -90,7 +83,7 @@ final class MountainManager: ObservableObject {
         
     }
     
-    func getClosestMountains(from location: CLLocation, within radius: Double = 50_000) -> [Mountain] {
+    func getClosestMountains(from location: CLLocation, within radius: Double = 30_000) -> [Mountain] {
         return mountains.compactMap { mountain in
             let distance = CLLocation(
                 latitude: mountain.coordinate.latitude,
@@ -110,5 +103,7 @@ final class MountainManager: ObservableObject {
             longitude: mountain.coordinate.longitude
         ).distance(from: location)
     }
+    
+   
 }
 
