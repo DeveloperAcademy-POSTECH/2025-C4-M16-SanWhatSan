@@ -19,6 +19,8 @@ struct SummitMarkerButton: View {
                 .frame(width: 55, height: 55)
 
             Image(previewImg ?? "tmp")
+                .resizable()
+                .scaledToFit()
                 .frame(width: 40, height: 40)
             
         }
