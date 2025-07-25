@@ -5,59 +5,6 @@
 //  Created by 최예은 on 7/24/25.
 //
 
-//import SwiftUI
-//
-//struct CameraWrapperView: View {
-//    let onFinish: () -> Void   // ✅ 외부에서 닫기
-//
-//    @State private var currentPage = 0
-//    let tutorialImages = ["OnBoarding1", "OnBoarding2"]
-//
-//    var body: some View {
-//        ZStack {
-//            TabView(selection: $currentPage) {
-//                ForEach(0..<tutorialImages.count, id: \.self) { index in
-//                    Image(tutorialImages[index])
-//                        .resizable()
-//                        .scaledToFill()
-//                        .ignoresSafeArea()
-//                        .tag(index)
-//                }
-//            }
-//            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-//            VStack {
-//                                Spacer()
-//                                HStack(spacing: 12) {
-//                                    ForEach(0..<tutorialImages.count, id: \.self) { index in
-//                                        Circle()
-//                                            .fill(currentPage == index ? Color("1DB796") : Color("D9D9D9"))
-//                                            .frame(width: 8, height: 8)
-//                                    }
-//                                }
-//                                .padding(.bottom, 120) // 위치 조절 y=600 근처
-//                            }
-//
-//            if currentPage == tutorialImages.count - 1 {
-//                VStack {
-//                    Spacer()
-//                    Button(action: {
-//                        withAnimation {
-//                            onFinish() // ✅ 외부에서 showTutorial = false 해줌
-//                        }
-//                    }) {
-//                        Text("시작하기")
-//                            .foregroundColor(.white)
-//                            .font(.headline)
-//                            .frame(width: 315, height: 55)
-//                            .background(Color("1DB796"))
-//                            .cornerRadius(12)
-//                    }
-//                    .padding(.bottom, 40) // y=700 근처
-//                }
-//            }
-//        }
-//    }
-//}
 import SwiftUI
 
 struct CameraWrapperView: View {
