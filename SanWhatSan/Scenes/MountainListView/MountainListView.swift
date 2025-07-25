@@ -11,7 +11,7 @@ import MapKit
 struct MountainListView: View {
     
     @EnvironmentObject private var coordinator: NavigationCoordinator
-    @StateObject private var viewModel = MountainListViewModel()
+    @ObservedObject private var viewModel = MountainListViewModel()
     @State private var region = MKCoordinateRegion(
         center: .init(latitude: 36.0, longitude: 128.0),
         latitudinalMeters: 10_000,
@@ -24,12 +24,14 @@ struct MountainListView: View {
         ZStack{
             //MARK: 지도
             MountainMapView(region: $region,
-                            mountains: viewModel.closestMountains)
+                            mountains: viewModel.closestMountains,
+                            selectedMountain: viewModel.selectedMountain)
             .ignoresSafeArea(.all)
             
             LinearGradient(
                 colors: [
-                    Color.white.opacity(0.5),
+                    Color.white.opacity(0.8),
+                    Color.white.opacity(0.2),
                     Color.white.opacity(0.0)
                 ],
                 startPoint: .bottom,
@@ -73,18 +75,18 @@ struct MountainListView: View {
                         }
                         if let selected = viewModel.selectedMountain {
                             Text("현재 선택된 산은")
-                                .font(.headline)
+                                .font(Font.custom("Pretendard", size: 16))
                                 .foregroundColor(.neutrals2)
                             Text("\(selected.name)")
-                                .font(.headline)
+                                .font(Font.custom("Pretendard", size: 16).weight(.bold))
                                 .bold()
                         }
                         else{
                             Text("현재 산이")
-                                .font(.headline)
+                                .font(Font.custom("Pretendard", size: 16))
                                 .foregroundColor(.neutrals2)
                             Text("아니산!!")
-                                .font(.headline)
+                                .font(Font.custom("Pretendard", size: 16).weight(.bold))
                                 .foregroundColor(.accentColor)
                                 .bold()
                         }
@@ -103,14 +105,13 @@ struct MountainListView: View {
                 Spacer()
                 Spacer()
                 
-                //MARK: ListCardView
-                //TODO: Modifying state during view update, this will cause undefined behavior. 스택 카드 뷰 수정
+                //MARK: ListCardView - 산이 없을 경우 스택을 보여주지 않기 때문에 (hifi 기준) 주석 처리 했습니다.
                 VStack(spacing: 10){
                     if viewModel.closestMountains.isEmpty {
-                        Text("주변 100km 이내에 산이 없습니다 🏞️")
-                            .font(.headline)
-                            .background(Color.white)
-                            .cornerRadius(15)
+//                        Text("주변 100km 이내에 산이 없습니다 🏞️")
+//                            .font(Font.custom("Pretendard", size: 16).weight(.bold))
+//                            .background(Color.white)
+//                            .cornerRadius(15)
                     }
                     else{
                         ForEach(viewModel.closestMountains) { mountain in
@@ -142,8 +143,8 @@ struct MountainListView: View {
                 withAnimation {
                     region = MKCoordinateRegion(
                         center: first.coordinate.clLocationCoordinate2D,
-                        span: MKCoordinateSpan(latitudeDelta: 0.5,
-                                               longitudeDelta: 0.5)
+                        span: MKCoordinateSpan(latitudeDelta: 0.3,
+                                               longitudeDelta: 0.3)
                     )
                 }
             }

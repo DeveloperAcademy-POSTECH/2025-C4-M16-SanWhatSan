@@ -11,6 +11,8 @@ import RealityKit
 class ARManager {
     var arView: ARView?
     lazy var coordinator = ARCoordinator(self)
+    private var lastScale: Float = 1.0
+    var marker: SummitMarker?
     
     func setupARView() -> ARView {
         let view = ARView(frame: .zero)
@@ -40,6 +42,9 @@ class ARManager {
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
+        
+        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
+        view.addGestureRecognizer(pinchGesture)
 
         return view
     }
@@ -50,6 +55,25 @@ class ARManager {
         let location = sender.location(in: view)
         
         placeModel(at: location)
+    }
+    
+    @objc private func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+        guard let arView = arView else { return }
+
+        // 현재 씬에서 첫 번째 Anchor의 첫 번째 자식 모델을 대상으로 한다고 가정
+        guard let anchor = arView.scene.anchors.first,
+              let model = anchor.children.first as? ModelEntity else { return }
+
+        switch gesture.state {
+        case .began:
+            lastScale = model.scale.x  // 현재 스케일 저장
+        case .changed:
+            let scaleFactor = Float(gesture.scale)
+            let newScale = lastScale * scaleFactor
+            model.setScale([newScale, newScale, newScale], relativeTo: nil)
+        default:
+            break
+        }
     }
 
     func startSession() {
@@ -77,18 +101,24 @@ class ARManager {
         guard let arView,
               let rayResult = arView.raycast(from: point, allowing: .estimatedPlane, alignment: .horizontal).first else {
             print("Raycast 실패")
+            //TODO: 바닥면을 인식하지 못했습니다.
             return
         }
 
         let anchor = AnchorEntity(world: rayResult.worldTransform)
 
         do {
+            if marker == nil {
+                marker = SummitMarker()
+            }
+            guard let marker else { print("ARManager/placeModel: marker is nil"); return }
+            
             // 모델 불러오기
-            let model = try Entity.loadModel(named: "sws2.usd")
+            let model = try Entity.loadModel(named: marker.modelFileName)
 
             // 텍스처 불러오기
-            let baseColorTexture = try TextureResource.load(named: "uv2.jpg")
-            let normalMapTexture = try TextureResource.load(named: "normalDX2.jpg")
+            let baseColorTexture = try TextureResource.load(named: marker.overlayFileName)
+            let normalMapTexture = try TextureResource.load(named: marker.textureFileName)
 
             // 머티리얼 생성
             var material = PhysicallyBasedMaterial()
@@ -123,5 +153,10 @@ class ARManager {
 
     func captureSnapshot(completion: @escaping (UIImage?) -> Void) {
         arView?.snapshot(saveToHDR: false, completion: completion)
+    }
+    
+    func removeModelInScene() {
+        guard let arView else { return }
+        arView.scene.anchors.removeAll()
     }
 }

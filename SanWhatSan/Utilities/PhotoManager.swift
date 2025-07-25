@@ -5,11 +5,6 @@
 //  Created by 박난 on 7/21/25.
 //
 
-import Foundation
-import CoreLocation
-import UIKit
-import Photos
-
 import UIKit
 import Photos
 import CoreLocation
@@ -95,5 +90,12 @@ class PhotoManager {
                 }
             }
         }
+    }
+    
+    func loadRecentImage() -> UIImage {
+        guard let recentPhoto = loadAllPhotos().first else {
+            return UIImage()    // TODO: 갤러리에 아무것도 없을 때 기본 사진 추가
+        }
+        return loadImage(from: recentPhoto)!
     }
 }
