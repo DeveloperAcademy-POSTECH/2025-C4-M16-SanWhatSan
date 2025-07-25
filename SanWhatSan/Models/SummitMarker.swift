@@ -26,6 +26,6 @@ struct SummitMarker {
         modelFileName = "sws1.usd"
         textureFileName = "normalDX.jpg"
         overlayFileName = "uv.jpg"
-        previewImageFileName = "tmp"
+        previewImageFileName = "산왔산"
     }
 }

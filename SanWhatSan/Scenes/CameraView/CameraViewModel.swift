@@ -111,7 +111,7 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
                 modelFileName: "sws1.usd",
                 textureFileName: "normalDX.jpg",
                 overlayFileName: "uv.jpg",
-                previewImageFileName: "tmp"
+                previewImageFileName: "도음산"
             )
         case "봉좌산":
                 switch index {
@@ -120,14 +120,14 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
                         modelFileName: "sws2.usd",
                         textureFileName: "normalDX2.jpg",
                         overlayFileName: "uv2.jpg",
-                        previewImageFileName: "tmp"
+                        previewImageFileName: "운제산"
                     )
                 case 1:
                     return SummitMarker(
                         modelFileName: "sws1.usd",
                         textureFileName: "normalDX.jpg",
                         overlayFileName: "uv.jpg",
-                        previewImageFileName: "tmp"
+                        previewImageFileName: "봉좌산"
                     )
                 default:
                     return SummitMarker() 
