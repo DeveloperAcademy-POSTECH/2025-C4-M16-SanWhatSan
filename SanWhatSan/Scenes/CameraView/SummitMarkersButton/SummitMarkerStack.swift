@@ -28,7 +28,8 @@ struct SummitMarkerStack: View {
                 let previewImg = viewModel.updateSummitMarker(for: name, index: 0).previewImageFileName
                 SummitMarkerButton(previewImg: previewImg)
             }
-            .padding(35)
+            .padding(.bottom, 32)
+            .padding(.trailing, 32)
 
             // 위로 펼쳐지는 버튼들 (index > 0)
             if showOtherMarkers {

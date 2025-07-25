@@ -92,7 +92,7 @@ struct CameraView: View {
                             .onTapGesture {
                                 coordinator.push(.albumView)
                             }
-                            .padding(.leading, 36)
+                            .padding(.leading, 32)
                             .padding(.bottom, 32)
 
                         Spacer()
@@ -118,7 +118,7 @@ struct CameraView: View {
                                 .shadow(color: .black.opacity(0.1), radius: 7.5, x: 0, y: -4)
                         }
                         .padding(.bottom, 32)
-                        //
+                        
                         Spacer()
                         
                         SummitMarkerStack(viewModel: viewModel)
