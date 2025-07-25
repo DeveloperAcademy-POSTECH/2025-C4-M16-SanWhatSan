@@ -16,14 +16,17 @@ import RealityKit
 struct CameraView: View {
     @EnvironmentObject private var coordinator: NavigationCoordinator
     @StateObject var viewModel = CameraViewModel()
+    @StateObject private var mountainViewModel = MountainListViewModel()
     @State var isImageViewActive = false
     @State var capturedImage: UIImage?
     @State private var showFlash = false
 
+    
+
     var body: some View {
         VStack {
             HStack(alignment: .center, spacing: 95) {
-                if let selected = viewModel.selectedMountain {
+                if let selected = mountainViewModel.selectedMountain {
                     HStack(spacing: 4) {
                         Image(systemName: "mountain.2.fill")
                             .foregroundColor(Color(red: 0.11, green: 0.72, blue: 0.59))
@@ -49,7 +52,7 @@ struct CameraView: View {
                 }
 
                 Button {
-                    coordinator.push(.mountainListView)
+                    coordinator.push(.mountainListView(mountainViewModel))
                 } label: {
                     Text(viewModel.selectedMountain == nil ? "산에 있산?" : "이 산이 아니산?")
                         .font(Font.custom("Pretendard", size: 12).weight(.medium))
@@ -115,15 +118,11 @@ struct CameraView: View {
                                 .shadow(color: .black.opacity(0.1), radius: 7.5, x: 0, y: -4)
                         }
                         .padding(.bottom, 32)
-
+                        //
                         Spacer()
-
-                        Button {
-
-                        } label: {
-                            Text("정상석")
-                        }
-                        .padding(35)
+                        
+                        SummitMarkerStack(viewModel: viewModel)
+                        
                     }
                 }
             }

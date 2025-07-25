@@ -12,6 +12,7 @@ struct MountainMapView: View {
     @Binding var region: MKCoordinateRegion
     //@Binding var closetMountain: view?
     let mountains: [Mountain]
+    let selectedMountain: Mountain?
 
     var body: some View {
         
@@ -20,7 +21,7 @@ struct MountainMapView: View {
                 coordinateRegion: $region,
                 interactionModes: .all,
                 showsUserLocation: true,
-                userTrackingMode: .constant(.follow)
+                userTrackingMode: .constant(.none)
             )
             .ignoresSafeArea(edges: .all)
         }
@@ -33,8 +34,10 @@ struct MountainMapView: View {
               annotationItems: mountains
             ) { mountain in
               MapAnnotation(coordinate: mountain.coordinate.clLocationCoordinate2D) {
-                MountainMapAnnotationView(mountain: mountain)
-              }
+                  MountainMapAnnotationView(
+                                      mountain: mountain,
+                                      isSelected: mountain.id == selectedMountain?.id
+                                  )              }
             }
             .ignoresSafeArea(edges: .all)
         }

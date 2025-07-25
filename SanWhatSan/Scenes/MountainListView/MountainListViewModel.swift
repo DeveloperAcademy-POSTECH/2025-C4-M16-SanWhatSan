@@ -38,7 +38,12 @@ class MountainListViewModel: NSObject, ObservableObject, CLLocationManagerDelega
         Publishers
             .CombineLatest($userLocation.compactMap { $0 }, $mountains)
             .map { [weak self] loc, _ in
-                self?.manager.getClosestMountains(from: loc) ?? []
+                //self?.manager.getClosestMountains(from: loc) ?? []
+                let closest = self?.manager.getClosestMountains(from: loc) ?? []
+                                if let first = closest.first {
+                                    self?.manager.chosenMountain = first
+                                }
+                                return closest
             }
             .receive(on: DispatchQueue.main)
             .assign(to: &$closestMountains)
