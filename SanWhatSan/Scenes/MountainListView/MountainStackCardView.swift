@@ -23,7 +23,10 @@ struct MountainStackCardView: View {
                     .fill(Color.gray.opacity(0.2))
                     .frame(width: 60, height: 60)
                     .overlay(
-                        Image("tmp")
+                        Image(title)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 55)
                     )
                 
                 Rectangle()

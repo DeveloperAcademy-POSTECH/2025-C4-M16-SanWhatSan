@@ -103,37 +103,48 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         locationManager.stopUpdatingLocation()
     }
     
-    func updateSummitMarker(for mountainName: String, index: Int = 0) -> SummitMarker {
-        //print("in CameraViewModel/updateSummitMarker \(mountainName), index=\(index)")
-        switch mountainName{
+    func summitMarkers(for mountainName: String) -> [SummitMarker] {
+        switch mountainName {
         case "도음산":
-            return SummitMarker(
-                modelFileName: "sws1.usd",
-                textureFileName: "normalDX.jpg",
-                overlayFileName: "uv.jpg",
-                previewImageFileName: "도음산"
-            )
+            return [
+                SummitMarker(
+                    modelFileName: "sws1.usd",
+                    textureFileName: "normalDX.jpg",
+                    overlayFileName: "uv.jpg",
+                    previewImageFileName: "도음산"
+                ),
+                SummitMarker(
+                    modelFileName: "sws1.usd",
+                    textureFileName: "normalDX.jpg",
+                    overlayFileName: "uv.jpg",
+                    previewImageFileName: "산왔산"
+                )
+            ]
         case "봉좌산":
-                switch index {
-                case 0:
-                    return SummitMarker(
-                        modelFileName: "sws2.usd",
-                        textureFileName: "normalDX2.jpg",
-                        overlayFileName: "uv2.jpg",
-                        previewImageFileName: "운제산"
-                    )
-                case 1:
-                    return SummitMarker(
-                        modelFileName: "sws1.usd",
-                        textureFileName: "normalDX.jpg",
-                        overlayFileName: "uv.jpg",
-                        previewImageFileName: "봉좌산"
-                    )
-                default:
-                    return SummitMarker() 
-                }
+            return [
+                SummitMarker(
+                    modelFileName: "sws2.usd",
+                    textureFileName: "normalDX2.jpg",
+                    overlayFileName: "uv2.jpg",
+                    previewImageFileName: "운제산"
+                ),
+                SummitMarker(
+                    modelFileName: "sws1.usd",
+                    textureFileName: "normalDX.jpg",
+                    overlayFileName: "uv.jpg",
+                    previewImageFileName: "봉좌산"
+                ),
+                SummitMarker(
+                    modelFileName: "sws1.usd",
+                    textureFileName: "normalDX.jpg",
+                    overlayFileName: "uv.jpg",
+                    previewImageFileName: "산왔산"
+                )
+            ]
         default:
-            return SummitMarker()
+            return [
+                SummitMarker()
+            ]
         }
     }
     
