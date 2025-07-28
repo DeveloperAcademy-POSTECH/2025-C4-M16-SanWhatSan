@@ -10,43 +10,61 @@ import SwiftUI
 struct SummitMarkerStack: View {
     @StateObject var viewModel: CameraViewModel
     @State private var showOtherMarkers = false
-
+    @State private var selectedIndex = 0
+    
     var body: some View {
-        ZStack(alignment: .bottom) {
-            let count = viewModel.selectedMountain?.summitMarkerCount ?? 1
+        ZStack(alignment: .bottomTrailing) {
             let name = viewModel.selectedMountain?.name ?? ""
+            let markers = viewModel.summitMarkers(for: name)
+            let count = markers.count
+            let safeIndex = min(selectedIndex, max(0, count - 1))
+            let currentMarker = markers[safeIndex]
+            
+            // 나머지 비석 선택 버튼들 (선택된 것 제외)
+            if count > 1 && showOtherMarkers {
+                ForEach(0..<count, id: \.self) { index in
+                    if index != safeIndex {
+                        let marker = markers[index]
+                        Button {
+                            withAnimation {
+                                selectedIndex = index
+                                viewModel.summitMarker = marker
+                                viewModel.arManager.removeModelInScene()
+                                showOtherMarkers = false
+                            }
+                        } label: {
+                            SummitMarkerButton(previewImg: marker.previewImageFileName)
+                        }
+                        //TODO: 여기서 기준이 index 라서 두번째 세번째가 선택되었을때 나머지가 안보이는 것 같음, ㅗ
+                        .offset(x: -30, y: CGFloat(-100 * (index - safeIndex)))
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .bottom).combined(with: .opacity),
+                            removal: .move(edge: .bottom).combined(with: .opacity)
+                        ))
+                        .animation(.spring(response: 0.4, dampingFraction: 0.6), value: showOtherMarkers)
+                    }
+                }
+            }
 
-            // 메인 버튼 (index 0)
+            // 메인 버튼
             Button {
-                viewModel.summitMarker = viewModel.updateSummitMarker(for: name, index: 0)
-                if count > 1 {
-                    withAnimation {
+                withAnimation {
+                    selectedIndex = safeIndex
+                    viewModel.summitMarker = currentMarker
+                    viewModel.arManager.removeModelInScene()
+                    if count > 1 {
                         showOtherMarkers.toggle()
                     }
                 }
             } label: {
-                let previewImg = viewModel.updateSummitMarker(for: name, index: 0).previewImageFileName
-                SummitMarkerButton(previewImg: previewImg)
+                SummitMarkerButton(previewImg: currentMarker.previewImageFileName)
             }
             .padding(.bottom, 32)
             .padding(.trailing, 32)
-
-            // 위로 펼쳐지는 버튼들 (index > 0)
-            if showOtherMarkers {
-                ForEach(1..<count, id: \.self) { index in
-                    Button {
-                        viewModel.summitMarker = viewModel.updateSummitMarker(for: name, index: index)
-                        viewModel.arManager.removeModelInScene()
-                        showOtherMarkers = false
-                    } label: {
-                        let previewImg = viewModel.updateSummitMarker(for: name, index: index).previewImageFileName
-                        SummitMarkerButton(previewImg: previewImg)
-                    }
-                    .offset(y: CGFloat(-100 * index))
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                    .animation(.spring(response: 0.4, dampingFraction: 0.6), value: showOtherMarkers)
-                }
-            }
+        }
+        .onChange(of: viewModel.selectedMountain) { _ in
+            selectedIndex = 0
+            showOtherMarkers = false
         }
     }
 }

@@ -18,7 +18,9 @@ struct SummitMarkerButton: View {
                 .fill(Color.white.opacity(0.3))
                 .frame(width: 55, height: 55)
 
-            Image(previewImg ?? "tmp")
+            Image(previewImg ?? "산왔산")
+                .resizable()
+                .scaledToFit()
                 .frame(width: 40, height: 40)
             
         }
