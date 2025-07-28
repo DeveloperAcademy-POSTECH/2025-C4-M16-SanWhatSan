@@ -29,9 +29,12 @@ struct PhotoDetailView: View {
         UIImage(named: "frame04"),
         UIImage(named: "frame05"),
         UIImage(named: "frame06"),
-        UIImage(named: "frame07")
+        UIImage(named: "frame07"),
+        UIImage(named: "frame08"),
+        UIImage(named: "frame09"),
+        UIImage(named: "frame10")
     ].compactMap { $0 }
-
+//이제는 올라가야 하지 않을까!
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - 이미지 영역
@@ -43,7 +46,7 @@ struct PhotoDetailView: View {
                     let height = width * (16 / 9)
 
                     VStack {
-                        Spacer().frame(height: 15) // 위에서 15 떨어지게
+                        Spacer().frame(height: 25) // 위에서 15 떨어지게
                         HStack {
                             Spacer()
                             ZStack {
@@ -151,7 +154,7 @@ struct PhotoDetailView: View {
                 }
             }
             .padding(.horizontal, 40)
-            .padding(.bottom, 50)
+            .padding(.bottom, 30)
         }
         .background(Color.white.ignoresSafeArea())
         .overlay(
@@ -269,21 +272,10 @@ func formatDate(_ date: Date) -> String {
 
 
 
-// MARK: - 대체 이미지 (프리뷰용)
-//extension UIImage {
-//    static func solidColor(_ color: UIColor = .gray, size: CGSize = CGSize(width: 100, height: 100)) -> UIImage {
-//        let renderer = UIGraphicsImageRenderer(size: size)
-//        return renderer.image { context in
-//            color.setFill()
-//            context.fill(CGRect(origin: .zero, size: size))
-//        }
-//    }
-//}
+
 
 // MARK: - 프리뷰
 #Preview {
-//    PhotoDetailView(
-//        photo: Photo(id: UUID(), filename: "", savedDate: Date(), location: Coordinate(latitude: 0, longitude: 0))
-//    )
+
 }
 
