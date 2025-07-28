@@ -17,16 +17,16 @@ struct AppNavigationView: View {
                     switch route {
                     case .cameraView:
                         CameraView()
-                    case .imageView(let displayImage):
-                        ImageView(displayImage: displayImage)
+//                    case .imageView(let displayImage):
+//                        ImageView(displayImage: displayImage)
                     case .mountainListView:
                         MountainListView()
-//                    case .albumView():
-//                        AlbumView()
-//                    case .photoDetailView():
-//                        PhotoDetailView()
+                    case .albumView:
+                        AlbumView()
+                    case .photoDetailView(let photo):
+                        PhotoDetailView(photo: photo)
 //                    case .frameView():
-//                        FrameView()
+//                        FrameView()   // TODO: 나중에 FrameView 파일 만들면 주석 해제하기
                     }
                 }
         }

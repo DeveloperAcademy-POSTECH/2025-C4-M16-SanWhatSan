@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreLocation
+import Combine
 
 class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     private var locationManager = CLLocationManager()
@@ -15,18 +16,27 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var selectedMountain: Mountain?
     @Published var userLocation: CLLocation?
     @Published var shouldShowAlert = false
+    @Published var summitMarker: SummitMarker?
 
     private var lastUpdateLocation: CLLocation?
-    let arManager = ARManager()
+    var arManager = ARManager()
+    private var cancellables = Set<AnyCancellable>()
+
 
     override init() {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        requestLocationAccess()
         manager.$chosenMountain
             .receive(on: DispatchQueue.main)
             .assign(to: &$selectedMountain)
+        
+        $summitMarker
+            .sink { [weak self] newMarker in
+                self?.arManager.marker = newMarker
+            }
+            .store(in: &cancellables)
+       
     }
 
     func startARSession() {
@@ -38,41 +48,42 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         print("placeModel")
     }
 
+    // MARK: 권한 요청은 LocationService 로 이동, 앱 시작점에서 한 번만 요청
     // MARK: - 위치 권한 요청
-    private func requestLocationAccess() {
-        let status = locationManager.authorizationStatus
-        handleAuthStatus(status)
-    }
-
-    private func handleAuthStatus(_ status: CLAuthorizationStatus) {
-        DispatchQueue.main.async { self.shouldShowAlert = false }
-
-        switch status {
-        case .notDetermined:
-            locationManager.requestWhenInUseAuthorization()
-        case .restricted, .denied:
-            DispatchQueue.main.async { self.shouldShowAlert = true }
-        case .authorizedAlways, .authorizedWhenInUse:
-            locationManager.startUpdatingLocation()
-        default:
-            break
-        }
-    }
-
-    // MARK: - CLLocationManagerDelegate
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        handleAuthStatus(manager.authorizationStatus)
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let currentLocation = locations.last else { return }
-        print("위치 갱신됨: \(currentLocation)")
-
-        DispatchQueue.main.async {
-            self.userLocation = currentLocation
-            self.updateClosestMountain(from: currentLocation)
-        }
-    }
+//    private func requestLocationAccess() {
+//        let status = locationManager.authorizationStatus
+//        handleAuthStatus(status)
+//    }
+//
+//    private func handleAuthStatus(_ status: CLAuthorizationStatus) {
+//        DispatchQueue.main.async { self.shouldShowAlert = false }
+//
+//        switch status {
+//        case .notDetermined:
+//            locationManager.requestWhenInUseAuthorization()
+//        case .restricted, .denied:
+//            DispatchQueue.main.async { self.shouldShowAlert = true }
+//        case .authorizedAlways, .authorizedWhenInUse:
+//            locationManager.startUpdatingLocation()
+//        default:
+//            break
+//        }
+//    }
+//
+//    // MARK: - CLLocationManagerDelegate
+//    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+//        handleAuthStatus(manager.authorizationStatus)
+//    }
+//
+//    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+//        guard let currentLocation = locations.last else { return }
+//        print("위치 갱신됨: \(currentLocation)")
+//
+//        DispatchQueue.main.async {
+//            self.userLocation = currentLocation
+//            self.updateClosestMountain(from: currentLocation)
+//        }
+//    }
 
     private func updateClosestMountain(from location: CLLocation) {
         if let last = lastUpdateLocation,
@@ -91,4 +102,54 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
 
         locationManager.stopUpdatingLocation()
     }
+    
+    func summitMarkers(for mountainName: String) -> [SummitMarker] {
+        switch mountainName {
+        case "도음산":
+            return [
+                SummitMarker(
+                    modelFileName: "sws1.usd",
+                    textureFileName: "normalDX.jpg",
+                    overlayFileName: "uv.jpg",
+                    previewImageFileName: "도음산"
+                ),
+                SummitMarker(
+                    modelFileName: "sws1.usd",
+                    textureFileName: "normalDX.jpg",
+                    overlayFileName: "uv.jpg",
+                    previewImageFileName: "산왔산"
+                )
+            ]
+        case "봉좌산":
+            return [
+                SummitMarker(
+                    modelFileName: "sws2.usd",
+                    textureFileName: "normalDX2.jpg",
+                    overlayFileName: "uv2.jpg",
+                    previewImageFileName: "운제산"
+                ),
+                SummitMarker(
+                    modelFileName: "sws1.usd",
+                    textureFileName: "normalDX.jpg",
+                    overlayFileName: "uv.jpg",
+                    previewImageFileName: "봉좌산"
+                ),
+                SummitMarker(
+                    modelFileName: "sws1.usd",
+                    textureFileName: "normalDX.jpg",
+                    overlayFileName: "uv.jpg",
+                    previewImageFileName: "산왔산"
+                )
+            ]
+        default:
+            return [
+                SummitMarker()
+            ]
+        }
+    }
+    
+//    func updateARMarker(){
+//        arManager.marker = summitMarker
+//    }
+        
 }

@@ -25,6 +25,7 @@ struct CameraView: View {
 
     var body: some View {
         VStack {
+
             ZStack(alignment: .topLeading) {
                 Color.clear
                     .frame(height: 64) // fixed container height for header box
@@ -50,6 +51,7 @@ struct CameraView: View {
                                 .font(Font.custom("Pretendard", size: 16).weight(.semibold))
                                 .foregroundColor(.black)
                         }
+
                     }
 
                     Spacer()
@@ -64,9 +66,11 @@ struct CameraView: View {
                             .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
                     }
                 }
+
                 .padding(.top, 27)
                 .padding(.horizontal, 30)
             }
+
 
             ZStack {
                 ARViewContainer(arManager: viewModel.arManager)
@@ -93,6 +97,7 @@ struct CameraView: View {
                             )
                             .onTapGesture {
                                 coordinator.push(.albumView)
+
                             }
                             .padding(.leading, 32)
                             .padding(.bottom, 32)
@@ -113,6 +118,7 @@ struct CameraView: View {
                                     }
                                 }
                             }
+
                         } label: {
                             Image("CameraButton")
                                 .resizable()
