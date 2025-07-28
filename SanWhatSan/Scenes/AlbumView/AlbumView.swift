@@ -92,6 +92,8 @@ struct AlbumView: View {
                             .foregroundColor(Color("AccentColor"))
                     }
                     
+                    Spacer().frame(width: 20)
+                    
                     Button {
                         showDeleteAlert = true
                     } label: {
