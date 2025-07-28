@@ -25,46 +25,52 @@ struct CameraView: View {
 
     var body: some View {
         VStack {
-            HStack(alignment: .center, spacing: 95) {
-                if let selected = mountainViewModel.selectedMountain {
-                    HStack(spacing: 4) {
+
+            ZStack(alignment: .topLeading) {
+                Color.white
+                    .frame(height: 92) // fixed white header background matching Figma spec
+
+                HStack {
+                    HStack(spacing: 3) {
                         Image(systemName: "mountain.2.fill")
                             .foregroundColor(Color(red: 0.11, green: 0.72, blue: 0.59))
-                        Text("현재 위치는 ")
-                            .font(Font.custom("Pretendard", size: 16).weight(.semibold))
-                            .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78)) +
-                        Text("\(selected.name)")
-                            .font(Font.custom("Pretendard", size: 16).weight(.bold))
-                            .foregroundColor(.black)
-                                +
-                        Text("이산")
-                            .font(Font.custom("Pretendard", size: 16).weight(.semibold))
-                            .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
+                        if let selected = mountainViewModel.selectedMountain {
+                            (
+                                Text("현재 위치는 ")
+                                    .font(Font.custom("Pretendard", size: 17).weight(.semibold))
+                                    .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
+                                + Text("\(selected.name)")
+                                    .font(Font.custom("Pretendard", size: 17).weight(.bold))
+                                    .foregroundColor(.black)
+                                + Text("이산")
+                                    .font(Font.custom("Pretendard", size: 17).weight(.semibold))
+                                    .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
+                            )
+                        } else {
+                            Text("현재 산이 아니산")
+                                .font(Font.custom("Pretendard", size: 17).weight(.semibold))
+                                .foregroundColor(.black)
+                        }
+
                     }
-                } else {
-                    HStack(spacing: 4) {
-                        Image(systemName: "mountain.2.fill")
-                            .foregroundColor(Color(red: 0.11, green: 0.72, blue: 0.59))
-                        Text("현재 산이 아니산")
-                            .font(Font.custom("Pretendard", size: 16).weight(.semibold))
-                            .foregroundColor(.black)
+
+                    Spacer()
+
+                    Button {
+                        coordinator.push(.mountainListView(mountainViewModel))
+                    } label: {
+                        Text(viewModel.selectedMountain == nil ? "산에 있산?" : "이 산이 아니산?")
+                            .font(Font.custom("Pretendard", size: 13).weight(.medium))
+                            .underline(true, pattern: .solid)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
                     }
                 }
 
-                Button {
-                    coordinator.push(.mountainListView(mountainViewModel))
-                } label: {
-                    Text(viewModel.selectedMountain == nil ? "산에 있산?" : "이 산이 아니산?")
-                        .font(Font.custom("Pretendard", size: 12).weight(.medium))
-                        .underline(true, pattern: .solid)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
-                        .frame(width: 90, alignment: .bottom)
-                }
+                .padding(.top, 52) // 59pt SafeArea + 6pt content offset
+                .padding(.horizontal, 26)
             }
-            .padding(.top, 56)
-            .padding(.leading, 33)
-            .frame(maxWidth: .infinity, alignment: .leading)
+
 
             ZStack {
                 ARViewContainer(arManager: viewModel.arManager)
@@ -91,6 +97,7 @@ struct CameraView: View {
                             )
                             .onTapGesture {
                                 coordinator.push(.albumView)
+
                             }
                             .padding(.leading, 32)
                             .padding(.bottom, 32)
@@ -111,6 +118,7 @@ struct CameraView: View {
                                     }
                                 }
                             }
+
                         } label: {
                             Image("CameraButton")
                                 .resizable()
