@@ -8,28 +8,25 @@
 import SwiftUI
 
 @main
+
 struct SanWhatSanApp: App {
-//    @StateObject private var LocationViewModel = MountainListViewModel()
-    //@StateObject private var cameraViewModel = CameraViewModel()
     @StateObject var coordinator = NavigationCoordinator()
-    @State private var showTutorial = true
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+
 
     var locationService = LocationService.shared
     
     var body: some Scene {
         WindowGroup {
             AppNavigationView()
-//                .onAppear{
-//                    LocationViewModel.requestLocationAccess() // TODO: 현재는 CameraView에서 하는데 나중에 앱 실행할 때로 바꾸기(LocationService.swift 따로 빼야 할듯)
-//                }
                 .preferredColorScheme(.light)
                 .environmentObject(coordinator)
-                .onAppear{
+                .onAppear {
                     locationService.requestLocationAccess()
                 }
-                .fullScreenCover(isPresented: $showTutorial) {
+                .fullScreenCover(isPresented: .constant(!hasSeenOnboarding)) {
                     CameraWrapperView {
-                        showTutorial = false
+                        hasSeenOnboarding = true
                     }
                 }
         }
