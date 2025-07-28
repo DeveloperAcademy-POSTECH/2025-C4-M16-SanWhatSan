@@ -27,8 +27,8 @@ struct CameraView: View {
         VStack {
 
             ZStack(alignment: .topLeading) {
-                Color.clear
-                    .frame(height: 64) // fixed container height for header box
+                Color.white
+                    .frame(height: 92) // fixed white header background matching Figma spec
 
                 HStack {
                     HStack(spacing: 3) {
@@ -37,18 +37,18 @@ struct CameraView: View {
                         if let selected = mountainViewModel.selectedMountain {
                             (
                                 Text("현재 위치는 ")
-                                    .font(Font.custom("Pretendard", size: 16).weight(.semibold))
+                                    .font(Font.custom("Pretendard", size: 17).weight(.semibold))
                                     .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
                                 + Text("\(selected.name)")
-                                    .font(Font.custom("Pretendard", size: 16).weight(.bold))
+                                    .font(Font.custom("Pretendard", size: 17).weight(.bold))
                                     .foregroundColor(.black)
                                 + Text("이산")
-                                    .font(Font.custom("Pretendard", size: 16).weight(.semibold))
+                                    .font(Font.custom("Pretendard", size: 17).weight(.semibold))
                                     .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
                             )
                         } else {
                             Text("현재 산이 아니산")
-                                .font(Font.custom("Pretendard", size: 16).weight(.semibold))
+                                .font(Font.custom("Pretendard", size: 17).weight(.semibold))
                                 .foregroundColor(.black)
                         }
 
@@ -60,15 +60,15 @@ struct CameraView: View {
                         coordinator.push(.mountainListView(mountainViewModel))
                     } label: {
                         Text(viewModel.selectedMountain == nil ? "산에 있산?" : "이 산이 아니산?")
-                            .font(Font.custom("Pretendard", size: 12).weight(.medium))
+                            .font(Font.custom("Pretendard", size: 13).weight(.medium))
                             .underline(true, pattern: .solid)
                             .multilineTextAlignment(.center)
                             .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
                     }
                 }
 
-                .padding(.top, 27)
-                .padding(.horizontal, 30)
+                .padding(.top, 52) // 59pt SafeArea + 6pt content offset
+                .padding(.horizontal, 29)
             }
 
 
