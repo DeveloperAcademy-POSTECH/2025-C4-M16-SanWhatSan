@@ -35,7 +35,7 @@ struct SummitMarkerStack: View {
                         } label: {
                             SummitMarkerButton(previewImg: marker.previewImageFileName)
                         }
-                        //TODO: 여기서 기준이 index 라서 두번째 세번째가 선택되었을때 나머지가 안보이는 것 같음, ㅗ
+                        //TODO: 여기서 기준이 index 라서 두번째 세번째가 선택되었을때 나머지가 안보이는 것 같음
                         .offset(x: -30, y: CGFloat(-100 * (index - safeIndex)))
                         .transition(.asymmetric(
                             insertion: .move(edge: .bottom).combined(with: .opacity),

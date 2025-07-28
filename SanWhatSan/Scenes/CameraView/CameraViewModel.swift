@@ -108,42 +108,47 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         case "도음산":
             return [
                 SummitMarker(
-                    modelFileName: "sws1.usd",
-                    textureFileName: "normalDX.jpg",
-                    overlayFileName: "uv.jpg",
+                    modelFileName: "sws_doeum.usd",
+                    textureFileName: "normalDX_doeum.jpg",
+                    overlayFileName: "uv_doeum.jpg",
                     previewImageFileName: "도음산"
                 ),
                 SummitMarker(
-                    modelFileName: "sws1.usd",
-                    textureFileName: "normalDX.jpg",
-                    overlayFileName: "uv.jpg",
+                    modelFileName: "sws_sanwhat.usd",
+                    textureFileName: "normalDX_sanwhat.jpg",
+                    overlayFileName: "uv_sanwhat.jpg",
                     previewImageFileName: "산왔산"
                 )
             ]
         case "봉좌산":
             return [
                 SummitMarker(
-                    modelFileName: "sws2.usd",
-                    textureFileName: "normalDX2.jpg",
-                    overlayFileName: "uv2.jpg",
+                    modelFileName: "sws_unje.usd",
+                    textureFileName: "normalDX_unje.jpg",
+                    overlayFileName: "uv_unje.jpg",
                     previewImageFileName: "운제산"
                 ),
                 SummitMarker(
-                    modelFileName: "sws1.usd",
-                    textureFileName: "normalDX.jpg",
-                    overlayFileName: "uv.jpg",
+                    modelFileName: "sws_bongjwa.usd",
+                    textureFileName: "normalDX_bongjwa.jpg",
+                    overlayFileName: "uv_bongjwa.jpg",
                     previewImageFileName: "봉좌산"
                 ),
                 SummitMarker(
-                    modelFileName: "sws1.usd",
-                    textureFileName: "normalDX.jpg",
-                    overlayFileName: "uv.jpg",
+                    modelFileName: "sws_sanwhat.usd",
+                    textureFileName: "normalDX_sanwhat.jpg",
+                    overlayFileName: "uv_sanwhat.jpg",
                     previewImageFileName: "산왔산"
-                )
+                ),
             ]
         default:
             return [
-                SummitMarker()
+                SummitMarker(
+                    modelFileName: "sws_sanwhat.usd",
+                    textureFileName: "normalDX_sanwhat.jpg",
+                    overlayFileName: "uv_sanwhat.jpg",
+                    previewImageFileName: "산왔산"
+                )
             ]
         }
     }
