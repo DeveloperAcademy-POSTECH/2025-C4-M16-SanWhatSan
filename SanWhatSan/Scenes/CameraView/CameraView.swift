@@ -68,7 +68,7 @@ struct CameraView: View {
                 }
 
                 .padding(.top, 52) // 59pt SafeArea + 6pt content offset
-                .padding(.horizontal, 29)
+                .padding(.horizontal, 26)
             }
 
 
