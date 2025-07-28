@@ -16,78 +16,116 @@ import RealityKit
 struct CameraView: View {
     @EnvironmentObject private var coordinator: NavigationCoordinator
     @StateObject var viewModel = CameraViewModel()
-    //    @StateObject var mountainListViewModel = MountainListViewModel()
-    //    @State var chosenMountain: Mountain?
+    @StateObject private var mountainViewModel = MountainListViewModel()
     @State var isImageViewActive = false
     @State var capturedImage: UIImage?
+    @State private var showFlash = false
+
     
+
     var body: some View {
         VStack {
-            HStack(alignment: .center, spacing: 95) {
-                if let selected = viewModel.selectedMountain {
-                    HStack(spacing: 4) {
+            ZStack(alignment: .topLeading) {
+                Color.clear
+                    .frame(height: 64) // fixed container height for header box
+
+                HStack {
+                    HStack(spacing: 3) {
                         Image(systemName: "mountain.2.fill")
                             .foregroundColor(Color(red: 0.11, green: 0.72, blue: 0.59))
-                        Text("현재 위치는 ")
-                            .font(Font.custom("Pretendard", size: 16).weight(.semibold))
-                            .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78)) +
-                        Text("\(selected.name)")
-                            .font(Font.custom("Pretendard", size: 16).weight(.bold))
-                            .foregroundColor(.black) +
-                        Text("이산")
-                            .font(Font.custom("Pretendard", size: 16).weight(.semibold))
+                        if let selected = mountainViewModel.selectedMountain {
+                            (
+                                Text("현재 위치는 ")
+                                    .font(Font.custom("Pretendard", size: 16).weight(.semibold))
+                                    .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
+                                + Text("\(selected.name)")
+                                    .font(Font.custom("Pretendard", size: 16).weight(.bold))
+                                    .foregroundColor(.black)
+                                + Text("이산")
+                                    .font(Font.custom("Pretendard", size: 16).weight(.semibold))
+                                    .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
+                            )
+                        } else {
+                            Text("현재 산이 아니산")
+                                .font(Font.custom("Pretendard", size: 16).weight(.semibold))
+                                .foregroundColor(.black)
+                        }
+                    }
+
+                    Spacer()
+
+                    Button {
+                        coordinator.push(.mountainListView(mountainViewModel))
+                    } label: {
+                        Text(viewModel.selectedMountain == nil ? "산에 있산?" : "이 산이 아니산?")
+                            .font(Font.custom("Pretendard", size: 12).weight(.medium))
+                            .underline(true, pattern: .solid)
+                            .multilineTextAlignment(.center)
                             .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
                     }
-                } else {
-                    HStack(spacing: 4) {
-                        Image(systemName: "mountain.2.fill")
-                            .foregroundColor(Color(red: 0.11, green: 0.72, blue: 0.59))
-                        Text("현재 산이 아니산")
-                            .font(Font.custom("Pretendard", size: 16).weight(.semibold))
-                            .foregroundColor(.black)
-                    }
                 }
-                
-                Button {
-                    coordinator.push(.mountainListView)
-                } label: {
-                    Text(viewModel.selectedMountain == nil ? "산에 있산?" : "이 산이 아니산?")
-                        .font(Font.custom("Pretendard", size: 12).weight(.medium))
-                        .underline(true, pattern: .solid)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(Color(red: 0.78, green: 0.78, blue: 0.78))
-                        .frame(width: 90, alignment: .bottom)
-                }
+                .padding(.top, 27)
+                .padding(.horizontal, 30)
             }
-            .padding(.top, 56)
-            .padding(.leading, 33)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             ZStack {
                 ARViewContainer(arManager: viewModel.arManager)
                     .ignoresSafeArea()
-                
+
+                if showFlash {
+                    Color.white
+                        .ignoresSafeArea()
+                        .transition(.opacity)
+                }
+
                 VStack {
                     Spacer()
-                    Button {
-                        viewModel.arManager.captureSnapshot { image in
-                            if let image = image {
-                                // coordinator 기반으로 뷰 전환
-                                coordinator.push(
-                                    .imageView(DisplayImage(id: UUID(), image: image))
-                                )
-                                // capturedImage = image
-                                // isImageViewActive = true
-                            }
-                        }
-                    } label: {
-                        Image("CameraButton")
+                    HStack {
+                        Image(uiImage: PhotoManager.shared.loadRecentImage())
                             .resizable()
-                            .frame(width: 73, height: 73)
-                            .shadow(color: .black.opacity(0.1), radius: 7.5, x: 0, y: -4)
+                            .scaledToFill()
+                            .frame(width: 60, height: 60)
+                            .clipped()
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.white, lineWidth: 2)
+                            )
+                            .onTapGesture {
+                                coordinator.push(.albumView)
+                            }
+                            .padding(.leading, 32)
+                            .padding(.bottom, 32)
+
+                        Spacer()
+
+                        Button {
+                            viewModel.arManager.captureSnapshot { image in
+                                if let image = image {
+                                    PhotoManager.shared.saveImageToLocalPhoto(image)
+                                    withAnimation(.easeIn(duration: 0.05)) {
+                                        showFlash = true
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        withAnimation(.easeOut(duration: 0.3)) {
+                                            showFlash = false
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            Image("CameraButton")
+                                .resizable()
+                                .frame(width: 73, height: 73)
+                                .shadow(color: .black.opacity(0.1), radius: 7.5, x: 0, y: -4)
+                        }
+                        .padding(.bottom, 32)
+                        
+                        Spacer()
+                        
+                        SummitMarkerStack(viewModel: viewModel)
                         
                     }
-                    .padding(.bottom, 32)
                 }
             }
         }
@@ -95,7 +133,7 @@ struct CameraView: View {
             viewModel.startARSession()
         }
     }
-    
+
 }
 
 struct CameraView_Previews: PreviewProvider {
