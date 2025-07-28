@@ -22,10 +22,10 @@ struct SummitMarker {
         self.previewImageFileName = previewImageFileName
     }
     
-    init(){
-        modelFileName = "sws1.usd"
-        textureFileName = "normalDX.jpg"
-        overlayFileName = "uv.jpg"
+    init() {
+        modelFileName = "sws_sanwhat.usd"
+        textureFileName = "normalDX_sanwhat.jpg"
+        overlayFileName = "uv_sanwhat.jpg"
         previewImageFileName = "산왔산"
     }
 }
