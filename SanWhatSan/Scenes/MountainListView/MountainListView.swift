@@ -12,6 +12,7 @@ struct MountainListView: View {
     
     @EnvironmentObject private var coordinator: NavigationCoordinator
     @ObservedObject private var viewModel = MountainListViewModel()
+    //지도 규모랑 중심. 여기서 수정하면 지도 규모 수정 가능.
     @State private var region = MKCoordinateRegion(
         center: .init(latitude: 36.0, longitude: 128.0),
         latitudinalMeters: 10_000,
@@ -28,6 +29,7 @@ struct MountainListView: View {
                             selectedMountain: viewModel.selectedMountain)
             .ignoresSafeArea(.all)
             
+            //TODO: 이 그라데이션때문에 지도 터치가 안먹음. 우선순위 상의 후 Hifi 수정하거나 다른 방법을 찾아야 함.
             LinearGradient(
                 colors: [
                     Color.white.opacity(0.8),
@@ -133,11 +135,6 @@ struct MountainListView: View {
             }
             
         }
-        .onAppear{
-            // viewModel.requestLocationAccess()
-            
-        }
-        //MARK: 0.5 = 500 km (임시)
         .onChange(of: viewModel.closestMountains) { newList in
             if let first = newList.first {
                 withAnimation {
@@ -150,26 +147,6 @@ struct MountainListView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        //            .onChange(of: viewModel.closestMountains) {
-        //                if let first = viewModel.closestMountains.first {
-        ////                    cameraPosition = .region(MKCoordinateRegion(
-        ////                        center: first.coordinate.clLocationCoordinate2D,
-        ////                        span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-        ////                    ))
-        //                }
-        //            }
-        //            .onChange(of: chosenMountain) {
-        //                if let selected = chosenMountain {
-        //                        withAnimation {
-        //                            cameraPosition = .region(
-        //                                MKCoordinateRegion(
-        //                                    center: selected.coordinate.clLocationCoordinate2D,
-        //                                    span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-        //                                )
-        //                            )
-        //                        }
-        //                    }
-        //            }
         //MARK: custom Alert
         .alert("위치 권한이 필요합니다", isPresented: $viewModel.shouldShowAlert){
             Button("OK", role: .cancel){}

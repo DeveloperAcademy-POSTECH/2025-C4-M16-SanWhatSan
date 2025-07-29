@@ -43,7 +43,9 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         arManager.startSession()
     }
 
+    //MARK: 이거 안쓰이는 것 같아용
     func handleTap(at point: CGPoint) {
+        print("오잉? 여기 안찍힘 CameraViewModel/handleTap")
         arManager.placeModel(at: point)
         print("placeModel")
     }
@@ -85,6 +87,7 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
 //        }
 //    }
 
+    //이거 안쓰는 함수입니다 ! mountainList 뷰모델에 같은 함수가 있고, 거기 init이 필요해서 그거 만들어서 써용 !
     private func updateClosestMountain(from location: CLLocation) {
         if let last = lastUpdateLocation,
            location.distance(from: last) < 50 {
@@ -103,6 +106,7 @@ class CameraViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         locationManager.stopUpdatingLocation()
     }
     
+    // 이거는.. 쓰이는 함수지만 수정되어야 할 함수...
     func summitMarkers(for mountainName: String) -> [SummitMarker] {
         switch mountainName {
         case "도음산":

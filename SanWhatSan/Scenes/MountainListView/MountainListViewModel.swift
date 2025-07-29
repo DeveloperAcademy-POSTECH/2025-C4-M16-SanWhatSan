@@ -98,4 +98,12 @@ class MountainListViewModel: NSObject, ObservableObject, CLLocationManagerDelega
 
 
 
-
+/*
+ 흐름 설명
+ 1.    ViewModel이 userLocation을 기준으로
+ 2.    manager.searchMountains(...) 실행
+ 3.    결과가 manager.mountains에 저장됨
+ 4.    ViewModel이 .assign(to: &$mountains)로 구독
+ 5.    View에서 mountains 표시
+ 6.    가장 가까운 산을 계산해서 closestMountains, selectedMountain, manager.chosenMountain 순으로 선택
+ */

@@ -16,7 +16,7 @@ import RealityKit
 struct CameraView: View {
     @EnvironmentObject private var coordinator: NavigationCoordinator
     @StateObject var viewModel = CameraViewModel()
-    @StateObject private var mountainViewModel = MountainListViewModel()
+    @StateObject private var mountainViewModel = MountainListViewModel()    //여기서 소유하는 mountainViewModel 만들어서 하위 뷰에 내려줍니다
     @State var isImageViewActive = false
     @State var capturedImage: UIImage?
     @State private var showFlash = false
