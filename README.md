@@ -17,11 +17,11 @@
 
 | [<img src="https://github.com/whalswjd.png" width="80"/>](https://github.com/whalswjd) | [<img src="https://github.com/nan-park.png" width="80"/>](https://github.com/nan-park) | [<img src="https://github.com/simi-sumin.png" width="80"/>](https://github.com/simi-sumin) |
 |:--:|:--:|:--:|
-| **MINJEONG** <br> MapKit 담당 개발 | **NanPark** <br> ARKit 담당 개발 | **simi-sumin** <br> 앨범 기능 개발 |
+| **MINJEONG** <br> | **NanPark** <br> | **simi-sumin** <br> |
 
 | [<img src="https://github.com/1ONE111.png" width="80"/>](https://github.com/1ONE111) | [<img src="https://github.com/Junia-Choi.png" width="80"/>](https://github.com/Junia-Choi) | [<img src="https://github.com/gun-no.png" width="80"/>](https://github.com/gun-no) |
 |:--:|:--:|:--:|
-| **hONE (Ell)** <br> 뷰 디자인, 구현 | **Junia-Choi** <br> 뷰 디자인, 구현 | **gun-no** <br> UI 및 로고 디자인 |
+| **hONE (Ell)** <br> | **Junia-Choi** <br> | **gun-no** <br> |
 
 ## 3️⃣ 프로젝트 구조 설명
 
